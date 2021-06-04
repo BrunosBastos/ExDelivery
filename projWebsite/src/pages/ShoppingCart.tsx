@@ -195,7 +195,7 @@ const ShopCartList = () => {
                             />
                           </TableCell>
                           <TableCell>
-                            {product.quantity * product.price}
+                            {(product.quantity * product.price).toFixed(2)}
                           </TableCell>
                         </TableRow>
                       ))}
