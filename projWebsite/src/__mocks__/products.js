@@ -3,50 +3,56 @@ import { v4 as uuid } from 'uuid';
 export default [
   {
     id: uuid(),
-    createdAt: '27/03/2019',
+    supplier: 'Farmacia 1',
     description: 'Dropbox is a file hosting service that offers cloud storage, file synchronization, a personal cloud.',
-    media: '/static/images/products/product_1.png',
-    title: 'Dropbox',
-    totalDownloads: '594'
+    image: '/static/images/products/product_1.png',
+    name: 'Dropbox',
+    price: 25.42,
+    quantity: 1
   },
   {
     id: uuid(),
-    createdAt: '31/03/2019',
+    supplier: 'Farmacia 2',
     description: 'Medium is an online publishing platform developed by Evan Williams, and launched in August 2012.',
-    media: '/static/images/products/product_2.png',
-    title: 'Medium Corporation',
-    totalDownloads: '625'
+    image: '/static/images/products/product_2.png',
+    name: 'Medium Corporation',
+    price: 30.99,
+    quantity: 1
   },
   {
     id: uuid(),
-    createdAt: '03/04/2019',
+    supplier: 'Farmacia 3',
     description: 'Slack is a cloud-based set of team collaboration tools and services, founded by Stewart Butterfield.',
-    media: '/static/images/products/product_3.png',
-    title: 'Slack',
-    totalDownloads: '857'
+    image: '/static/images/products/product_3.png',
+    name: 'Slack',
+    price: 19.99,
+    quantity: 1
   },
   {
     id: uuid(),
-    createdAt: '04/04/2019',
+    supplier: 'Farmacia 4',
     description: 'Lyft is an on-demand transportation company based in San Francisco, California.',
-    media: '/static/images/products/product_4.png',
-    title: 'Lyft',
-    totalDownloads: '406'
+    image: '/static/images/products/product_4.png',
+    name: 'Lyft',
+    price: 9.99,
+    quantity: 1
   },
   {
     id: uuid(),
-    createdAt: '04/04/2019',
+    supplier: 'Farmacia 5',
     description: 'GitHub is a web-based hosting service for version control of code using Git.',
-    media: '/static/images/products/product_5.png',
-    title: 'GitHub',
-    totalDownloads: '835'
+    image: '/static/images/products/product_5.png',
+    name: 'GitHub',
+    price: 2.5,
+    quantity: 1
   },
   {
     id: uuid(),
-    createdAt: '04/04/2019',
+    supplier: 'Farmacia 6',
     description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
-    media: '/static/images/products/product_6.png',
-    title: 'Squarespace',
-    totalDownloads: '835'
+    image: '/static/images/products/product_6.png',
+    name: 'Squarespace',
+    price: 51.99,
+    quantity: 1
   }
 ];
