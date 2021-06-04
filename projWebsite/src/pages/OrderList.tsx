@@ -10,8 +10,6 @@ import {
   SvgIcon
  } from '@material-ui/core';
 import { Search as SearchIcon } from 'react-feather';
-import CourierListResults from 'src/components/courier/CourierListResults';
-import couriers from 'src/__mocks__/customers';
 //@ts-ignore
 import LatestOrders from 'src/components/dashboard//LatestOrders.tsx';
 
