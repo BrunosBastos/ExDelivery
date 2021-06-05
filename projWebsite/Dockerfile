@@ -12,7 +12,11 @@ COPY package.json package-lock.json ./
 #COPY ./build/* ./public/
 
 #install dependencies:
-RUN npm ci 
+
+RUN npm install yarn
+
+RUN yarn install
+
 # Arguments
 ARG REACT_APP_API_BASE_URL
 ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
@@ -22,4 +26,5 @@ ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
 COPY . .
 
 # start
-CMD ["npm", "start"]
+
+CMD ["yarn", "start"]

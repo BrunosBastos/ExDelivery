@@ -12,14 +12,12 @@ import {
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import AddShoppingCartOutlinedIcon from '@material-ui/icons/AddShoppingCartOutlined';
 import { toast } from 'react-toastify';
-import Logo from 'src/components/Logo';
+import useShopCartStore from 'src/stores/useShopCartStore';
 
 
 const toast_props = {
-  position: toast.POSITION.TOP_RIGHT,
-  autoClose: 5000,
+  position: toast.POSITION.BOTTOM_RIGHT,
   hideProgressBar: false,
-  closeOnClick: true,
   draggable: true,
   pauseOnFocusLoss: false,
   pauseOnHover: false,
@@ -28,25 +26,33 @@ const toast_props = {
 
 const ProductCard = ({ product, ...rest }) => {
   const addToCart = (product) => {
+    useShopCartStore.getState().addProduct(product)
+  
     //@ts-ignore
-    toast.dark(
+    toast.info(
       <Box sx={{ p: 2 }}>
         <Grid container spacing={2}
           sx={{ justifyContent: 'space-between' }}>
           <Grid item
+            xs={3}
             sx={{
-              alignItems: 'center',
+              alignItems: 'left',
               display: 'flex'
             }}>
-              <Logo />
+              <Avatar
+                alt="Product"
+                src={product.image}
+                variant="square"
+              />
           </Grid>
           <Grid
+            xs={9}
             item
             sx={{
-              alignItems: 'center',
+              alignItems: 'right',
               display: 'flex'
             }}>
-            {product.title}
+            {product.name} Added to Shopping Cart
           </Grid>
         </Grid>
       </Box>
@@ -73,7 +79,7 @@ const ProductCard = ({ product, ...rest }) => {
         >
           <Avatar
             alt="Product"
-            src={product.media}
+            src={product.image}
             variant="square"
           />
         </Box>
@@ -83,12 +89,19 @@ const ProductCard = ({ product, ...rest }) => {
           gutterBottom
           variant="h4"
         >
-          {product.title}
+          {product.name}
         </Typography>
         <Typography
           align="center"
           color="textPrimary"
           variant="body1"
+        >
+          {product.supplier}
+        </Typography>
+        <Typography
+          align="center"
+          color="textPrimary"
+          variant="body2"
         >
           {product.description}
         </Typography>
@@ -116,7 +129,7 @@ const ProductCard = ({ product, ...rest }) => {
               style={{fontSize: '1rem'}}
               variant="body2"
             >
-              19.99 €
+              {product.price} €
             </Typography>
           </Grid>
           <Grid

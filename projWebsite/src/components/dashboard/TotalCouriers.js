@@ -24,7 +24,7 @@ const TotalCouriers = (props) => (
             gutterBottom
             variant="h6"
           >
-            TOTAL Couriers
+            TOTAL COURIERS
           </Typography>
           <Typography
             color="textPrimary"

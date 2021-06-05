@@ -81,8 +81,8 @@ const AddProduct = () => {
                           <Avatar
 
                             sx={{
-                              height: 180,
-                              width: 180
+                              height: 160,
+                              width: 160
                             }}
                           />
                         </Box>
@@ -105,6 +105,7 @@ const AddProduct = () => {
                         </div>
                       </Grid>
                       <Grid
+                        pt={2}
                         container
                         md={8}
                         xs={12}
