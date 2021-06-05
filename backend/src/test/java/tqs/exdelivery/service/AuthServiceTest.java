@@ -149,7 +149,6 @@ class AuthServiceTest {
     verify(repository, VerificationModeFactory.times(1)).findByEmail(any());
     verify(repository, VerificationModeFactory.times(1)).save(any());
     verify(courierRepository, VerificationModeFactory.times(1)).save(any());
-
   }
 
   @Test

@@ -1,4 +1,3 @@
 package tqs.exdelivery.exception;
 
-public class EmailAlreadyInUseException extends Exception {
-}
+public class EmailAlreadyInUseException extends Exception {}

@@ -23,17 +23,17 @@ public class AuthController {
   @PostMapping("/register")
   public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
 
-    try{
+    try {
       User user = service.registerUser(request);
       return ResponseEntity.status(HttpStatus.OK).body(user);
-    }catch (EmailAlreadyInUseException e){
+    } catch (EmailAlreadyInUseException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
   }
 
   @PostMapping("/login")
   public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request) {
-      JwtAuthenticationResponse jwt = service.authenticateUser(request);
-      return ResponseEntity.status(HttpStatus.OK).body(jwt);
+    JwtAuthenticationResponse jwt = service.authenticateUser(request);
+    return ResponseEntity.status(HttpStatus.OK).body(jwt);
   }
 }

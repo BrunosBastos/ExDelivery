@@ -29,101 +29,101 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 class AuthControllerTest {
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    private AuthService authService;
+  @Autowired private MockMvc mvc;
+  @MockBean private AuthService authService;
 
-    RegisterRequest registerRequest;
-    LoginRequest loginRequest;
-    @BeforeEach
-    void setUp() {
-        registerRequest = new RegisterRequest();
-        registerRequest.setPassword("password");
-        registerRequest.setEmail("test@email.com");
-        registerRequest.setName("Test");
+  RegisterRequest registerRequest;
+  LoginRequest loginRequest;
 
-        loginRequest = new LoginRequest();
-        loginRequest.setEmail("test@email.com");
-        loginRequest.setPassword("password");
+  @BeforeEach
+  void setUp() {
+    registerRequest = new RegisterRequest();
+    registerRequest.setPassword("password");
+    registerRequest.setEmail("test@email.com");
+    registerRequest.setName("Test");
 
-        RestAssuredMockMvc.mockMvc(mvc);
-    }
+    loginRequest = new LoginRequest();
+    loginRequest.setEmail("test@email.com");
+    loginRequest.setPassword("password");
 
-    @Test
-    void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
+    RestAssuredMockMvc.mockMvc(mvc);
+  }
 
-        User user = setUpUserRegister();
+  @Test
+  void whenRegisterWithValidData_thenReturnData() throws EmailAlreadyInUseException {
 
-        when(authService.registerUser(any(RegisterRequest.class))).thenReturn(user);
+    User user = setUpUserRegister();
 
-        RestAssured.defaultParser = Parser.JSON;
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(registerRequest)
-                .post("api/v1/register")
-                .then()
-                .assertThat()
-                .statusCode(200).and()
-                .body("email", is(user.getEmail()))
-                .and()
-                .body("name", is(user.getName()))
-                ;
+    when(authService.registerUser(any(RegisterRequest.class))).thenReturn(user);
 
-        verify(authService, times(1)).registerUser(any());
-    }
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(registerRequest)
+        .post("api/v1/register")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("email", is(user.getEmail()))
+        .and()
+        .body("name", is(user.getName()));
 
-    @Test
-    void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException() throws EmailAlreadyInUseException {
+    verify(authService, times(1)).registerUser(any());
+  }
 
-        when(authService.registerUser(any(RegisterRequest.class))).thenThrow(new EmailAlreadyInUseException());
+  @Test
+  void whenRegisterWithInValidData_thenReturnEmailAlreadyInUseException()
+      throws EmailAlreadyInUseException {
 
-        RestAssured.defaultParser = Parser.JSON;
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(registerRequest)
-                .post("api/v1/register")
-                .then()
-                .assertThat()
-                .statusCode(400);
+    when(authService.registerUser(any(RegisterRequest.class)))
+        .thenThrow(new EmailAlreadyInUseException());
 
-        verify(authService, times(1)).registerUser(any());
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(registerRequest)
+        .post("api/v1/register")
+        .then()
+        .assertThat()
+        .statusCode(400);
 
-    }
+    verify(authService, times(1)).registerUser(any());
+  }
 
-    @Test
-    void whenLoginWithValidCredentials_thenReturnToken() {
+  @Test
+  void whenLoginWithValidCredentials_thenReturnToken() {
 
-        JwtAuthenticationResponse jwt = new JwtAuthenticationResponse("valid token");
+    JwtAuthenticationResponse jwt = new JwtAuthenticationResponse("valid token");
 
-        when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
-        RestAssured.defaultParser = Parser.JSON;
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(loginRequest)
-                .post("api/v1/login")
-                .then()
-                .assertThat()
-                .statusCode(200).and()
-                .body("accessToken", is(jwt.getAccessToken()))
-                .and().body("tokenType", is(jwt.getTokenType()))
-        ;
-        verify(authService, times(1)).authenticateUser(any());
-    }
+    when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
+    RestAssured.defaultParser = Parser.JSON;
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(loginRequest)
+        .post("api/v1/login")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .and()
+        .body("accessToken", is(jwt.getAccessToken()))
+        .and()
+        .body("tokenType", is(jwt.getTokenType()));
+    verify(authService, times(1)).authenticateUser(any());
+  }
 
-    User setUpUserRegister(){
-        User user = new User();
-        user.setEmail("test@email.com");
-        user.setPassword("password");
-        user.setUserId(1L);
-        user.setName("Test");
+  User setUpUserRegister() {
+    User user = new User();
+    user.setEmail("test@email.com");
+    user.setPassword("password");
+    user.setUserId(1L);
+    user.setName("Test");
 
-        Courier courier = new Courier();
-        courier.setLat(10);
-        courier.setLon(20);
+    Courier courier = new Courier();
+    courier.setLat(10);
+    courier.setLon(20);
 
-        user.setCourier(courier);
-        return user;
-    }
-
+    user.setCourier(courier);
+    return user;
+  }
 }

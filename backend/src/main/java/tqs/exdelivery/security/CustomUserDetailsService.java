@@ -10,14 +10,10 @@ import tqs.exdelivery.entity.User;
 import tqs.exdelivery.exception.UserNotFoundException;
 import tqs.exdelivery.repository.UserRepository;
 
-import java.util.Objects;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-  @Autowired
-  private UserRepository userRepository;
-
+  @Autowired private UserRepository userRepository;
 
   @SneakyThrows
   @Override
@@ -35,5 +31,4 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     return new CustomUserDetails(user);
   }
-
 }
