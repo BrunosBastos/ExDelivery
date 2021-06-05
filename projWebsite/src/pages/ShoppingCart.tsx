@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet';
-import products from 'src/__mocks__/customers';
 import { useState } from 'react';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -17,48 +16,59 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
+  TextField
 } from '@material-ui/core';
 import getInitials from 'src/utils/getInitials';
 import Purchase from 'src/components/shoppingCart/Purchase';
-
+import useShopCartStore from 'src/stores/useShopCartStore'
 
 const ShopCartList = () => {
-  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(0);
+  const products = useShopCartStore(state => state.products)
 
   const handleSelectAll = (event) => {
-    let newSelectedProductIds;
+    let newSelectedProducts;
 
     if (event.target.checked) {
-      newSelectedProductIds = products.map((product) => product.id);
+      newSelectedProducts = products.map((product) => product);
     } else {
-      newSelectedProductIds = [];
+      newSelectedProducts = [];
     }
 
-    setSelectedProductIds(newSelectedProductIds);
+    setSelectedProducts(newSelectedProducts);
   };
 
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedProductIds.indexOf(id);
-    let newSelectedProductIds = [];
+  const handleSelectOne = (event, product) => {
+    const selectedIndex = selectedProducts.indexOf(product);
+    let newSelectedProducts = [];
 
     if (selectedIndex === -1) {
-      newSelectedProductIds = newSelectedProductIds.concat(selectedProductIds, id);
+      newSelectedProducts = newSelectedProducts.concat(selectedProducts, product);
     } else if (selectedIndex === 0) {
-      newSelectedProductIds = newSelectedProductIds.concat(selectedProductIds.slice(1));
-    } else if (selectedIndex === selectedProductIds.length - 1) {
-      newSelectedProductIds = newSelectedProductIds.concat(selectedProductIds.slice(0, -1));
+      newSelectedProducts = newSelectedProducts.concat(selectedProducts.slice(1));
+    } else if (selectedIndex === selectedProducts.length - 1) {
+      newSelectedProducts = newSelectedProducts.concat(selectedProducts.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelectedProductIds = newSelectedProductIds.concat(
-        selectedProductIds.slice(0, selectedIndex),
-        selectedProductIds.slice(selectedIndex + 1)
+      newSelectedProducts = newSelectedProducts.concat(
+        selectedProducts.slice(0, selectedIndex),
+        selectedProducts.slice(selectedIndex + 1)
       );
     }
 
-    setSelectedProductIds(newSelectedProductIds);
+    setSelectedProducts(newSelectedProducts);
   };
+
+  const removeSelected = () => {
+    selectedProducts.forEach(product => {
+      useShopCartStore.getState().removeProduct(product);
+    })
+    setSelectedProducts([])
+    //@ts-ignore
+    document.getElementById("select_box").checked = false;
+  }
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -68,6 +78,11 @@ const ShopCartList = () => {
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
+
+  const changeQuantity = (product) => {
+    //@ts-ignore
+    useShopCartStore.getState().setProductQuantity(product, document.getElementById(product.id + 'quant').value)
+  }
 
   return (
     <>
@@ -91,12 +106,14 @@ const ShopCartList = () => {
                       <TableRow>
                         <TableCell padding="checkbox">
                           <Checkbox
-                            checked={selectedProductIds.length === products.length}
+                            checked={selectedProducts.length === 0 ? false :
+                                      selectedProducts.length === products.length}
                             color="primary"
                             indeterminate={
-                              selectedProductIds.length > 0
-                              && selectedProductIds.length < products.length
+                              selectedProducts.length > 0
+                              && selectedProducts.length < products.length
                             }
+                            id="select_box"
                             onChange={handleSelectAll}
                           />
                         </TableCell>
@@ -107,13 +124,16 @@ const ShopCartList = () => {
                           Reference
                         </TableCell>
                         <TableCell>
+                          Supplier
+                        </TableCell>
+                        <TableCell>
                           Price
                         </TableCell>
                         <TableCell>
                           Quantity
                         </TableCell>
                         <TableCell>
-                          Supplier
+                          Total
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -122,12 +142,12 @@ const ShopCartList = () => {
                         <TableRow
                           hover
                           key={product.id}
-                          selected={selectedProductIds.indexOf(product.id) !== -1}
+                          selected={selectedProducts.indexOf(product) !== -1}
                         >
                           <TableCell padding="checkbox">
                             <Checkbox
-                              checked={selectedProductIds.indexOf(product.id) !== -1}
-                              onChange={(event) => handleSelectOne(event, product.id)}
+                              checked={selectedProducts.indexOf(product) !== -1}
+                              onChange={(event) => handleSelectOne(event, product)}
                               value="true"
                             />
                           </TableCell>
@@ -139,7 +159,7 @@ const ShopCartList = () => {
                               }}
                             >
                               <Avatar
-                                src={product.avatarUrl}
+                                src={product.image}
                                 sx={{ mr: 2 }}
                               >
                                 {getInitials(product.name)}
@@ -153,16 +173,29 @@ const ShopCartList = () => {
                             </Box>
                           </TableCell>
                           <TableCell>
-                            {product.email}
+                            {product.id}
                           </TableCell>
                           <TableCell>
-                            {`${product.address.city}, ${product.address.state}, ${product.address.country}`}
+                            {product.supplier}
                           </TableCell>
                           <TableCell>
-                            {product.phone}
+                            {product.price}
                           </TableCell>
                           <TableCell>
-                            {moment(product.createdAt).format('DD/MM/YYYY')}
+                            <TextField
+                              required
+                              name="quantity"
+                              onChange={() => changeQuantity(product)}
+                              type="number"
+                              InputProps={{ inputProps: { min: 1, max: 1000} }}
+                              defaultValue={product.quantity}
+                              variant="outlined"
+                              id={product.id+'quant'}
+                              style={{maxWidth: 100}}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {(product.quantity * product.price).toFixed(2)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -189,7 +222,7 @@ const ShopCartList = () => {
                 md={6}
                 sm={4}
                 >
-                { selectedProductIds.length > 0 ? 
+                { selectedProducts.length > 0 ? 
                   <Box
                     sx={{
                       display: 'flex',
@@ -200,6 +233,7 @@ const ShopCartList = () => {
                     <Button
                       color="secondary"
                       variant="contained"
+                      onClick={() => removeSelected()}
                     >
                       Remove Selected
                     </Button>

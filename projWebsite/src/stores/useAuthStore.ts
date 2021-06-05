@@ -8,8 +8,8 @@ const useAuthStore = createStore(
             key:"auth",
         },
         (set) => ({
-            token: String as null,
-            expire_date: String as null,
+            token: String,
+            expire_date: String,
             login: (token: string, expire_date: string) => {
                 set((state) => ({
                     token:token,

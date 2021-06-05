@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -15,10 +15,11 @@ import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import InputIcon from '@material-ui/icons/Input';
 import Logo from './Logo';
+import useShopCartStore from 'src/stores/useShopCartStore';
 
 const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
   const [notifications] = useState([]);
-  const [items] = useState([]);
+  const products = useShopCartStore(state => state.products);
   const theme = useTheme();
   const hidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
   const hiddenDown = useMediaQuery(theme => theme.breakpoints.down('lg'));
@@ -35,19 +36,21 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
         <Box sx={{ flexGrow: 1 }} />
         {hiddenDown ? null :
           <>
-            <IconButton color="inherit">
-              <Badge
-                badgeContent={items.length}
-                color="primary"
-                variant="dot"
-              >
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
+            <RouterLink to="/app/shoppingCart">
+              <IconButton style={{color: 'white'}}>
+                <Badge
+                  badgeContent={products.length}
+                  color="secondary"
+                  variant="number"
+                >
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
+            </RouterLink>
             <IconButton color="inherit">
               <Badge
                 badgeContent={notifications.length}
-                color="primary"
+                color="secondary"
                 variant="dot"
               >
                 <NotificationsIcon />
