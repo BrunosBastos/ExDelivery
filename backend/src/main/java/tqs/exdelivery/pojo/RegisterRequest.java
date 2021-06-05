@@ -3,16 +3,14 @@ package tqs.exdelivery.pojo;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
 public class RegisterRequest {
 
   @NotBlank
-  @Size(min = 4, max = 50)
+  @Size(min = 4, max = 30)
   private String name;
 
   @NotBlank
@@ -23,4 +21,14 @@ public class RegisterRequest {
   @NotBlank
   @Size(min = 6, max = 25)
   private String password;
+
+  @NotBlank
+  @Min(-180)
+  @Max(180)
+  private double lon;
+
+  @NotBlank
+  @Min(-90)
+  @Max(90)
+  private double lat;
 }

@@ -26,7 +26,7 @@ public class AuthService {
 
   @Autowired private UserRepository userRepository;
 
-  @Autowired private CourierRepository clientRepository;
+  @Autowired private CourierRepository courierRepository;
 
   @Autowired private PasswordEncoder passwordEncoder;
 
@@ -53,15 +53,17 @@ public class AuthService {
     }
 
     User user = new User();
+    user.setName(request.getName());
     user.setEmail(request.getEmail());
     user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-    Courier client = new Courier();
-    client.setName(request.getName());
+    Courier courier = new Courier();
+    courier.setLat(request.getLat());
+    courier.setLon(request.getLon());
     user = userRepository.save(user);
 
-    client.setUser(user);
-    clientRepository.save(client);
+    courier.setUser(user);
+    courierRepository.save(courier);
 
     return user;
   }

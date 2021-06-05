@@ -67,7 +67,7 @@ class AuthControllerTest {
                 .statusCode(200).and()
                 .body("email", is(user.getEmail()))
                 .and()
-                .body("courier.name", is(user.getCourier().getName()))
+                .body("name", is(user.getName()))
                 ;
 
         verify(authService, times(1)).registerUser(any());
@@ -116,9 +116,11 @@ class AuthControllerTest {
         user.setEmail("test@email.com");
         user.setPassword("password");
         user.setUserId(1L);
+        user.setName("Test");
 
         Courier courier = new Courier();
-        courier.setName("Test");
+        courier.setLat(10);
+        courier.setLon(20);
 
         user.setCourier(courier);
         return user;
