@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tqs.exdelivery.pojo.LoginRequest;
 import tqs.exdelivery.pojo.RegisterRequest;
@@ -86,6 +87,7 @@ class AuthControllerIT {
 
   @Test
   @Order(3)
+  @WithMockUser()
   void whenLoginWithValidCredentials_thenReturnToken() {
 
     given()
