@@ -91,27 +91,6 @@ class AuthControllerTest {
     verify(authService, times(1)).registerUser(any());
   }
 
-  @Test
-  void whenLoginWithValidCredentials_thenReturnToken() {
-
-    JwtAuthenticationResponse jwt = new JwtAuthenticationResponse("valid token");
-
-    when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwt);
-    RestAssured.defaultParser = Parser.JSON;
-    RestAssuredMockMvc.given()
-        .header("Content-Type", "application/json")
-        .body(loginRequest)
-        .post("api/v1/login")
-        .then()
-        .assertThat()
-        .statusCode(200)
-        .and()
-        .body("accessToken", is(jwt.getAccessToken()))
-        .and()
-        .body("tokenType", is(jwt.getTokenType()));
-    verify(authService, times(1)).authenticateUser(any());
-  }
-
   User setUpUserRegister() {
     User user = new User();
     user.setEmail("test@email.com");
