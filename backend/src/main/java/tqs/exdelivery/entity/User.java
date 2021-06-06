@@ -1,17 +1,24 @@
 package tqs.exdelivery.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Data;
+import lombok.*;
+import org.springframework.security.core.Transient;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Table
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@EqualsAndHashCode
 @JsonSerialize
+@Transient
 public class User {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private long userId;
 
   @Column(nullable = false, length = 50)

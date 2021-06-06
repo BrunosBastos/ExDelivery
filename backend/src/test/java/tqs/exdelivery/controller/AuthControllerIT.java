@@ -1,13 +1,11 @@
 package tqs.exdelivery.controller;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tqs.exdelivery.pojo.LoginRequest;
 import tqs.exdelivery.pojo.RegisterRequest;
@@ -42,8 +40,8 @@ class AuthControllerIT {
     registerRequest.setLon(20);
 
     validLoginRequest = new LoginRequest();
-    validLoginRequest.setEmail(registerRequest.getEmail());
-    validLoginRequest.setPassword(registerRequest.getPassword());
+    validLoginRequest.setEmail("test@example.com");
+    validLoginRequest.setPassword("password");
 
     invalidLoginRequest = new LoginRequest();
     invalidLoginRequest.setEmail(registerRequest.getEmail());
@@ -87,7 +85,6 @@ class AuthControllerIT {
 
   @Test
   @Order(3)
-  @WithMockUser()
   void whenLoginWithValidCredentials_thenReturnToken() {
 
     given()

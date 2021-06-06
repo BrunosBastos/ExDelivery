@@ -4,10 +4,12 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import org.springframework.security.core.Transient;
 
 @Entity
 @Data
 @JsonSerialize
+@Transient
 public class Courier {
 
   @Id
