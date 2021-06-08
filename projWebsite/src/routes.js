@@ -11,6 +11,7 @@ import ProductList from 'src/pages/ProductList.tsx';
 import Register from 'src/pages/Register.tsx';
 import Settings from 'src/pages/Settings';
 import AddProduct from './pages/AddProduct.tsx';
+import AddSupplier from './pages/AddSupplier.tsx';
 import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
 
@@ -26,6 +27,7 @@ const routes = [
       { path: 'products', element: <ProductList /> },
       { path: 'settings', element: <Settings /> },
       { path: 'addProduct', element: <AddProduct />},
+      { path: 'addSupplier', element: <AddSupplier />},
       { path: 'product/:id', element: <PharmacyProductDetails />},
       { path: 'shoppingCart', element: <ShoppingCart />},
       { path: '*', element: <Navigate to="/404" /> }

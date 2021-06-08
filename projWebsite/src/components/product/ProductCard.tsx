@@ -26,6 +26,7 @@ const toast_props = {
 
 const ProductCard = ({ product, ...rest }) => {
   const addToCart = (product) => {
+    product.quantity = 1;
     useShopCartStore.getState().addProduct(product)
   
     //@ts-ignore
@@ -79,7 +80,7 @@ const ProductCard = ({ product, ...rest }) => {
         >
           <Avatar
             alt="Product"
-            src={product.image}
+            src={"https://www.mecofarma.com/media/catalog/product/e/9/e9fa45f889e9fc4973a2ce5cd6af0eeafbef945c_000245.png?quality=80&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700&format=jpeg"}
             variant="square"
           />
         </Box>
@@ -96,7 +97,7 @@ const ProductCard = ({ product, ...rest }) => {
           color="textPrimary"
           variant="body1"
         >
-          {product.supplier}
+          {product.supplier.name}
         </Typography>
         <Typography
           align="center"

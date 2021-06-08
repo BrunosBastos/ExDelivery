@@ -1,6 +1,13 @@
 import createStore from "zustand";
 import persist from 'src/stores/utils/persist.js';
 
+interface Supplier {
+    id: number;
+    name: string;
+    lat: number;
+    lon: number;
+}
+
 interface Product {
     name: string;
     id: number;
@@ -8,7 +15,7 @@ interface Product {
     description: string;
     image: string;
     quantity: number;
-    supplier: string;
+    supplier: Supplier;
 }
 
 function containsObject(obj: Product, list: Product[]) {

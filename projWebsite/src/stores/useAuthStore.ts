@@ -2,31 +2,32 @@ import createStore from "zustand";
 import persist from 'src/stores/utils/persist.js';
 
 
+interface User {
+    name: string;
+    email: string;
+    superUser: boolean;
+    userId: number;
+}
+
+
 const useAuthStore = createStore(
     persist(
         {
-            key:"auth",
+            key:"auth3",
         },
         (set) => ({
-            token: String,
-            expire_date: String,
-            login: (token: string, expire_date: string) => {
+            token: null,
+            user: null,
+            login: (token: string, user: User) => {
                 set((state) => ({
-                    token:token,
-                    expire_date:expire_date
+                    token: token,
+                    user: user,
                 }))
             },
-            leave: () => {
+            exit: () => {
                 set((state) => ({
                     token: null,
-                    expire_date: null,
-                    guest_uuid: null
-                }))
-            },
-            updateToken: (token: string, expire_date: string) => {
-                set((state) => ({
-                        token: token,
-                        expire_date: expire_date
+                    user: null,
                 }))
             }
         })

@@ -1,5 +1,8 @@
-import React from 'react';
+import {useEffect,useState} from 'react';
 import { Helmet } from 'react-helmet';
+import ProductService from "../services/productService";
+import { toast } from 'react-toastify';
+
 import {
   Avatar,
   Box,
@@ -21,13 +24,80 @@ import {
 } from '@material-ui/core';
 
 const Account = () => {
+  const [editing, setEditing] = useState(false);
+  const [save, setSave] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [image, setImage] = useState("");
+  const prod_id = window.location.pathname.split('/').pop();
 
-  const [editing, setEditing] = React.useState(false);
-  const [save, setSave] = React.useState(false);
+  const notifySuccess = (msg) => {
+    toast.success(msg, {
+      position: toast.POSITION.TOP_CENTER
+      });
+  }
+  
+  const notifyError = (msg) => {
+    toast.error(msg, {
+      position: toast.POSITION.TOP_CENTER
+      });
+  }
+
+  const setImageUrl = (event) => {
+    setImage(event.target.value);
+  }
+  useEffect ( () => {
+    ProductService.getProduct(prod_id)
+    .then( (res) => {
+        return res.json();
+    })
+    .then ( (res) => {
+      if(!res.errors){
+        console.log(res)
+          setProduct(res); 
+          setImage(res.imageUrl);    
+      }
+      else {
+        notifyError("Error obtaining product");
+      }
+    })
+    .catch ( (error) => {
+      notifyError("Something Went Wrong.");
+    } )
+  }, [] )
+
+  const handleSubmit = () => {
+    //@ts-ignore
+    let name: string = document.getElementById('prodname').value;
+    //@ts-ignore
+    let description: string = document.getElementById('proddescription').value;
+    //@ts-ignore
+    let stock: number = document.getElementById('prodstock').value;
+    //@ts-ignore
+    let price: number = document.getElementById('prodprice').value;
+    let supplier: number = product.supplier.id;
+    //@ts-ignore
+    ProductService.updateProduct(prod_id,name,description,price,stock,image,supplier)
+      .then( (res) => {
+        return res.json();
+      })
+      .then( (res) => {
+        
+        if(res.error){
+          notifyError("Error updating product");
+        }
+        else{
+          notifySuccess("Succesfully updated product");   
+        }
+        handleClose();
+      })
+      .catch( (error) => {
+        notifyError("Something Went Wrong.");
+      })
+  }
+
 
   // cannot call it delete
-  const [deleteD, setDeleteD] = React.useState(false);
-
+  const [deleteD, setDeleteD] = useState(false);
 
   const handleClickOpen = () => {
     setSave(true);
@@ -45,6 +115,7 @@ const Account = () => {
   const handleDeleteClose = () => {
     setDeleteD(false);
   }
+  
 
   return (
     <>
@@ -59,6 +130,7 @@ const Account = () => {
         }}
       >
         <Container maxWidth="lg">
+          { product != null  ?  
           <Grid
             container
             spacing={3}
@@ -70,6 +142,7 @@ const Account = () => {
               xs={12}
             >
               <Card >
+          
                 <CardContent>
                   <Box
                     sx={{
@@ -83,21 +156,11 @@ const Account = () => {
                         height: 300,
                         width: 300
                       }}
+                      src={image}
                     />
                   </Box>
                 </CardContent>
                 <Divider />
-                { editing ? 
-                <CardActions>
-                  <Button
-                    color="primary"
-                    fullWidth
-                    variant="text"
-                  >
-                    Upload picture
-                  </Button>
-                </CardActions>
-                : <></>}
               </Card>
             </Grid>
             <Grid
@@ -128,9 +191,11 @@ const Account = () => {
                         <TextField
                           fullWidth
                           name="name"
+                          id="prodname"
                           required
                           label="Product Name"
                           variant="outlined"
+                          defaultValue= {product.name}
                           disabled={!editing}
                         />
                       </Grid>
@@ -141,11 +206,13 @@ const Account = () => {
                       >
                         <TextField
                           fullWidth
-                          label="Address"
-                          name="address"
+                          label="Image URL"
+                          name="image"
                           required
                           variant="outlined"
                           disabled={!editing}
+                          defaultValue={product.imageUrl}
+                          onChange={setImageUrl}
                         />
                       </Grid>
                       <Grid
@@ -160,7 +227,9 @@ const Account = () => {
                           type="number"
                           required
                           variant="outlined"
+                          defaultValue={product.price}
                           disabled={!editing}
+                          id="prodprice"
 
                         />
                       </Grid>
@@ -175,6 +244,8 @@ const Account = () => {
                           name="stock"
                           type="number"
                           variant="outlined"
+                          id="prodstock"
+                          defaultValue={product.stock}
                           required
                           disabled={!editing}
                         />
@@ -188,8 +259,9 @@ const Account = () => {
                           fullWidth
                           label="Description"
                           name="description"
-                          type="number"
+                          id="proddescription"
                           variant="outlined"
+                          defaultValue= { product.description}
                           disabled={!editing}
                           multiline
                           rows={3}
@@ -228,7 +300,7 @@ const Account = () => {
                           </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                              <Button onClick={handleClose} color="primary">
+                              <Button onClick={handleSubmit} color="primary">
                                 Confirm
                               </Button>
                               <Button onClick={handleClose} color="primary" autoFocus>
@@ -285,6 +357,7 @@ const Account = () => {
               </form>
             </Grid>
           </Grid>
+          : ""}
         </Container>
       </Box>
     </>

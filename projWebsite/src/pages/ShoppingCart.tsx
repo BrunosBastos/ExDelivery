@@ -81,7 +81,14 @@ const ShopCartList = () => {
 
   const changeQuantity = (product) => {
     //@ts-ignore
-    useShopCartStore.getState().setProductQuantity(product, document.getElementById(product.id + 'quant').value)
+    if (document.getElementById(product.id + 'quant').value){
+      //@ts-ignore
+      useShopCartStore.getState().setProductQuantity(product, document.getElementById(product.id + 'quant').value)
+    } else {
+      //@ts-ignore
+      document.getElementById(product.id + 'quant').value = 1
+      useShopCartStore.getState().setProductQuantity(product, 1)
+    }
   }
 
   return (
@@ -176,7 +183,7 @@ const ShopCartList = () => {
                             {product.id}
                           </TableCell>
                           <TableCell>
-                            {product.supplier}
+                            {product.supplier.name}
                           </TableCell>
                           <TableCell>
                             {product.price}

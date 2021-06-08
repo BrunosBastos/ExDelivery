@@ -27,6 +27,7 @@ import {
 import NavItem from './NavItem';
 import HistoryIcon from '@material-ui/icons/History';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
 
 const user = {
   avatar: '/static/images/avatars/avatar_6.png',
@@ -74,6 +75,11 @@ const items = [
     href: '/app/addProduct',
     icon: PlusCircleIcon,
     title: 'Add Product'
+  },
+  {
+    href: '/app/addSupplier',
+    icon: LocalPharmacyIcon,
+    title: 'Add Supplier'
   },
   {
     href: '/app/product/1',

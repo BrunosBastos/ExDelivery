@@ -1,0 +1,1 @@
+export const MEDEX_API_BASE_URL: string = 'http://localhost:8080/api/v1/';
