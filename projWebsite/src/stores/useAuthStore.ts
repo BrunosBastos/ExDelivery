@@ -13,7 +13,7 @@ interface User {
 const useAuthStore = createStore(
     persist(
         {
-            key:"auth2",
+            key:"auth3",
         },
         (set) => ({
             token: null,

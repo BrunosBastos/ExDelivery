@@ -12,11 +12,22 @@ class ProductService {
             headers: {
                 'accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization' : "Bearer "+ TEST_TOKEN
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
             }
         })
     }
 
+    getProduct(id: any){
+        return fetch(MEDEX_API_BASE_URL + 'products/' + id, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
+            }
+        })
+    }
     addnewProduct(name:string, description: string,address:string, price: number, stock: number, photo: string, supplier: number ){
 
         return fetch(MEDEX_API_BASE_URL + 'products', {
@@ -37,6 +48,26 @@ class ProductService {
                 supplier: supplier})
         })
     }
+
+    updateProduct(prodid:number ,name:string, description: string, price: number, stock: number, photo: string, supplier: number ){
+
+            return fetch(MEDEX_API_BASE_URL + 'products/' + prodid, {
+                method: 'PUT',
+                mode: 'cors',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization' : "Bearer "+ useAuthStore.getState().token
+                },
+                body: JSON.stringify({
+                    name: name, 
+                    description: description, 
+                    price: price, 
+                    stock: stock, 
+                    imageUrl:photo, 
+                    supplier: supplier})
+            })
+}
 }
 
 export default new ProductService();
