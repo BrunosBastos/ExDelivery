@@ -37,14 +37,15 @@ services:
   # Database Service (Mysql)
   db-del:
     image: mysql:5.7
-    ports:
-      - "3360:3306"
     restart: always
     environment:
       MYSQL_DATABASE: exdelivery
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin_pass
       MYSQL_ROOT_PASSWORD: 0x1c0e6ae
+      MYSQL_TCP_PORT: 3360
+    ports:
+      - "3360:3306"
     volumes:
       - db-data:/var/lib/mysql
     networks:
