@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tqs.exdelivery.entity.User;
+import org.springframework.web.server.ResponseStatusException;
 import tqs.exdelivery.exception.EmailAlreadyInUseException;
 import tqs.exdelivery.pojo.JwtAuthenticationResponse;
 import tqs.exdelivery.pojo.LoginRequest;
@@ -18,22 +18,26 @@ import tqs.exdelivery.service.AuthService;
 @RequestMapping("/api/v1")
 public class AuthController {
 
-  @Autowired private AuthService service;
+  @Autowired
+  private AuthService service;
 
   @PostMapping("/register")
-  public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
-
+  public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest request) {
     try {
-      User user = service.registerUser(request);
-      return ResponseEntity.status(HttpStatus.OK).body(user);
+      JwtAuthenticationResponse jwt = service.registerUser(request);
+      return ResponseEntity.status(HttpStatus.OK).body(jwt);
     } catch (EmailAlreadyInUseException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This email is already in use");
     }
   }
 
   @PostMapping("/login")
   public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request) {
-    JwtAuthenticationResponse jwt = service.authenticateUser(request);
-    return ResponseEntity.status(HttpStatus.OK).body(jwt);
+    try {
+      JwtAuthenticationResponse jwt = service.authenticateUser(request);
+      return ResponseEntity.status(HttpStatus.OK).body(jwt);
+    } catch (RuntimeException e) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The credentials provided are incorrect");
+    }
   }
 }

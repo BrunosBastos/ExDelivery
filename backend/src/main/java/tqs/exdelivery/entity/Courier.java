@@ -1,10 +1,11 @@
 package tqs.exdelivery.entity;
 
-import javax.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.springframework.security.core.Transient;
+
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -16,7 +17,8 @@ public class Courier {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long courierId;
 
-  @Column private double reputation;
+  @Column
+  private double reputation;
 
   @Column(nullable = false)
   private double lat;
@@ -26,5 +28,6 @@ public class Courier {
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
+  @JsonIgnore
   private User user;
 }
