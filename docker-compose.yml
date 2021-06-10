@@ -14,7 +14,7 @@ services:
     depends_on:
       - db-del
     environment: # Pass environment variables to the service
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-del:3306/exdelivery
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-del:3360/exdelivery
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin_pass
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
@@ -38,7 +38,7 @@ services:
   db-del:
     image: mysql:5.7
     ports:
-      - "3306:3306"
+      - "3360:3306"
     restart: always
     environment:
       MYSQL_DATABASE: exdelivery
