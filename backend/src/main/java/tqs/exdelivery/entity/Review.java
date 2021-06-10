@@ -27,19 +27,4 @@ public class Review {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "deliver_id", referencedColumnName = "id")
     private Delivery delivery;
-
-    public Review(long id, int rating, String comment) {
-        this.id = id;
-        this.rating = rating;
-        this.comment = comment;
-    }
-
-    public Review(long id, int rating, String comment, Courier courier, Delivery delivery) {
-        this.id = id;
-        this.rating = rating;
-        this.comment = comment;
-        this.courier = courier;
-        this.delivery = delivery;
-    }
-
 }
