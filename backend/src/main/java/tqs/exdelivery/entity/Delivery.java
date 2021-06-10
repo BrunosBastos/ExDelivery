@@ -25,11 +25,4 @@ public class Delivery {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "courier_id", referencedColumnName = "id")
     private Courier courier;
-
-    public Delivery(long id, Long purchaseId, String state, String host) {
-        this.id = id;
-        this.purchaseId = purchaseId;
-        this.state = state;
-        this.host = host;
-    }
 }
