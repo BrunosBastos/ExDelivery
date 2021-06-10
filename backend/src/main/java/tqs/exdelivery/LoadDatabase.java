@@ -17,7 +17,10 @@ import java.util.Arrays;
 
 @Configuration
 class LoadDatabase {
-
+    private static final String DELIVERY_HOST = "http:localhost:8080/";
+    private static final String DELIVERED_STATE = "delivered";
+    private static final String PASSWORD = "string";
+    
     @Bean
     CommandLineRunner initDatabase(
             UserRepository users, CourierRepository couriers, DeliveryRepository deliveries, ReviewRepository reviews) {
@@ -25,16 +28,16 @@ class LoadDatabase {
         return args -> {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             User adminUser = new User(1L, "leandro@gmail.com",
-                    encoder.encode("string"), "leandro",
+                    encoder.encode(this.PASSWORD), "leandro",
                     true, null);
             users.save(adminUser);
 
             User courierUser1 = new User(2L, "tiago@gmail.com",
-                            encoder.encode("string"), "tiago",
+                            encoder.encode(this.PASSWORD), "tiago",
                             false, null);
             users.save(courierUser1);
             User courierUser2 = new User(3L, "joaquim@gmail.com",
-                    encoder.encode("string"), "joaquim",
+                    encoder.encode(this.PASSWORD), "joaquim",
                     false, null);
             users.save(courierUser2);
 
@@ -48,16 +51,16 @@ class LoadDatabase {
                             }
                     );
 
-            Delivery delivery1 = new Delivery(1L, 1L, "delivered",
-                    "http:localhost:8080/", courier1);
-            Delivery delivery2 = new Delivery(2L, 2L, "delivered",
-                    "http:localhost:8080/", courier1);
+            Delivery delivery1 = new Delivery(1L, 1L, this.DELIVERED_STATE,
+                    this.DELIVERY_HOST, courier1);
+            Delivery delivery2 = new Delivery(2L, 2L, this.DELIVERED_STATE,
+                    this.DELIVERY_HOST, courier1);
             Delivery delivery3 = new Delivery(3L, 3L, "accepted",
-                    "http:localhost:8080/", courier1);
-            Delivery delivery4 = new Delivery(4L, 4L, "delivered",
-                    "http:localhost:8080/", courier2);
+                    this.DELIVERY_HOST, courier1);
+            Delivery delivery4 = new Delivery(4L, 4L, this.DELIVERED_STATE,
+                    this.DELIVERY_HOST, courier2);
             Delivery delivery5 = new Delivery(5L, 4L, "pending",
-                    "http:localhost:8080/", courier2);
+                    this.DELIVERY_HOST, courier2);
             Arrays.asList(delivery1, delivery2, delivery3, delivery4, delivery5)
                     .forEach(deliveries::save);
 
