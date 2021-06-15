@@ -28,11 +28,12 @@ import NavItem from './NavItem';
 import HistoryIcon from '@material-ui/icons/History';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
+import useAuthStore from 'src/stores/useAuthStore';
 
 const user = {
-  avatar: '/static/images/avatars/avatar_6.png',
-  jobTitle: 'Senior Developer',
-  name: 'Katarina Smith'
+  avatar: '/static/images/avatars/default_avatar.jpg',
+  jobTitle: '',
+  name: useAuthStore.getState().user ? useAuthStore.getState().user.name : ''
 };
 
 const items = [
