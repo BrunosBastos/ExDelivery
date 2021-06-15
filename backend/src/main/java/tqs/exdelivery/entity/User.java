@@ -1,5 +1,6 @@
 package tqs.exdelivery.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,8 +13,11 @@ import javax.persistence.*;
 @Entity
 @Table
 @Data
+@Getter
+@Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @JsonSerialize
 @Transient
@@ -26,6 +30,7 @@ public class User {
   @Column(nullable = false, length = 50)
   private String email;
 
+  @JsonIgnore
   @Column(nullable = false)
   private String password;
 
