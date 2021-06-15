@@ -1,10 +1,10 @@
-import { MEDEX_API_BASE_URL} from '../config/index';
+import { EXDELIVERY_API_BASE_URL} from '../config/index';
 import useAuthStore from 'src/stores/useAuthStore';
 
 
 class SupplierService {
     getSuppliers() {
-        return fetch( MEDEX_API_BASE_URL + "suppliers", {
+        return fetch( EXDELIVERY_API_BASE_URL + "suppliers", {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -16,7 +16,7 @@ class SupplierService {
     }
 
     addNewSupplier(name: string, lat: number, lon: number) {
-        return fetch( MEDEX_API_BASE_URL + "suppliers", {
+        return fetch( EXDELIVERY_API_BASE_URL + "suppliers", {
             method: 'Post',
             mode: 'cors',
             headers: {

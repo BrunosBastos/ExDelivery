@@ -66,6 +66,7 @@ const Login = () => {
               })
               .then((res) => {
                 if (res && res.accessToken) {
+                  console.log(res)
                   useAuthStore.getState().login(res.accessToken, res.user)
                   navigate('/app/dashboard', { replace: true });
                   notifySuccess("Successfully logged in")

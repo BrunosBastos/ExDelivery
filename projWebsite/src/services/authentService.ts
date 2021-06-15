@@ -1,8 +1,8 @@
-import { MEDEX_API_BASE_URL } from '../config/index';
+import { EXDELIVERY_API_BASE_URL } from '../config/index';
 
 class AuthentService {
     login(email, password) {
-        return fetch(MEDEX_API_BASE_URL + 'login', {
+        return fetch(EXDELIVERY_API_BASE_URL + 'login', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -14,7 +14,7 @@ class AuthentService {
     }
 
     register(email, password, name) {
-        return fetch(MEDEX_API_BASE_URL + 'register', {
+        return fetch(EXDELIVERY_API_BASE_URL + 'register', {
             method: 'POST',
             mode: 'cors',
             headers: {
