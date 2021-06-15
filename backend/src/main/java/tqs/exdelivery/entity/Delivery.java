@@ -12,17 +12,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Delivery {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private Long purchaseId;
+  private Long purchaseId;
 
-    private String state;
+  private String state;
 
-    private String host;
+  private String host;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "courier_id", referencedColumnName = "id")
-    private Courier courier;
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "courier_id", referencedColumnName = "id")
+  private Courier courier;
 }

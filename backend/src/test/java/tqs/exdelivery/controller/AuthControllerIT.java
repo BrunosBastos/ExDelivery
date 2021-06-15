@@ -10,7 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tqs.exdelivery.pojo.LoginRequest;
 import tqs.exdelivery.pojo.RegisterRequest;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -19,13 +19,11 @@ import static org.hamcrest.Matchers.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuthControllerIT {
 
-  @LocalServerPort private int port;
-
   private static RegisterRequest registerRequest;
   private static LoginRequest validLoginRequest;
   private static LoginRequest invalidLoginRequest;
-
   private static String baseUrl;
+  @LocalServerPort private int port;
 
   @BeforeAll
   static void init() {

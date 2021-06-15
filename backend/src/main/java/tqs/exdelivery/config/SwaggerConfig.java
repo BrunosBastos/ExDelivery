@@ -15,23 +15,25 @@ import java.util.Collections;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    @Bean
-    public Docket apiDocket() {
+  @Bean
+  public Docket apiDocket() {
 
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("tqs.exdelivery"))
-                .paths(PathSelectors.regex("/.*"))
-                .build();
+    return new Docket(DocumentationType.SWAGGER_2)
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("tqs.exdelivery"))
+        .paths(PathSelectors.regex("/.*"))
+        .build();
+  }
 
-    }
-    ApiInfo apiInfo() {
-        return new ApiInfo(
-                "TQS Air Quality REST API",
-                "REST API For TQS Air Quality",
-                "API TOS",
-                "Terms of service",
-                new Contact("Daniel Gomes", "www.ua.pt", "dagomes@ua.pt"),
-                "License of API", "API license URL", Collections.emptyList());
-    }
+  ApiInfo apiInfo() {
+    return new ApiInfo(
+        "TQS Air Quality REST API",
+        "REST API For TQS Air Quality",
+        "API TOS",
+        "Terms of service",
+        new Contact("Daniel Gomes", "www.ua.pt", "dagomes@ua.pt"),
+        "License of API",
+        "API license URL",
+        Collections.emptyList());
+  }
 }
