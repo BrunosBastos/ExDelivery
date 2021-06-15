@@ -19,8 +19,7 @@ import tqs.exdelivery.pojo.LoginRequest;
 import tqs.exdelivery.pojo.RegisterRequest;
 import tqs.exdelivery.service.AuthService;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -98,7 +97,8 @@ class AuthControllerTest {
                 .post("api/v1/register")
                 .then()
                 .assertThat()
-                .statusLine("400 This email is already in use");
+                .statusCode(400)
+                .contentType(nullValue());
 
         verify(authService, times(1)).registerUser(any());
     }
