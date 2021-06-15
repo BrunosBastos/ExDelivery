@@ -84,7 +84,7 @@ class AuthControllerTest {
         verify(authService, times(1)).registerUser(any());
     }
 
-   /** @Test
+    @Test
     void whenRegisterWithInvalidData_thenReturnEmailAlreadyInUseException()
             throws EmailAlreadyInUseException {
 
@@ -102,7 +102,7 @@ class AuthControllerTest {
                 .statusLine("400 This email is already in use");
 
         verify(authService, times(1)).registerUser(any());
-    } **/
+    }
 
     @Test
     void whenLoginWithValidCredentials_thenReturnToken() {
