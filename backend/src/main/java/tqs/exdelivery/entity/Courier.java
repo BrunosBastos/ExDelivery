@@ -35,6 +35,5 @@ public class Courier {
   @JsonIgnore
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
-  @JsonIgnore
   private User user;
 }
