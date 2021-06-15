@@ -17,6 +17,7 @@
         <java.version>11</java.version>
         <mockito-core.version>3.3.3</mockito-core.version>
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
+        <swagger.version>2.9.2</swagger.version>
         <sonar.projectKey>BrunosBastos_ExDelivery</sonar.projectKey>
         <sonar.organization>brunosbastos</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -188,6 +189,20 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Swagger Docs -->
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
     </dependencies>
 

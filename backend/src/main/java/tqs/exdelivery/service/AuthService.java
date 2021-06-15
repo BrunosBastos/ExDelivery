@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
+import tqs.exdelivery.entity.CustomUserDetails;
 import tqs.exdelivery.entity.User;
 import tqs.exdelivery.exception.EmailAlreadyInUseException;
 import tqs.exdelivery.pojo.JwtAuthenticationResponse;
@@ -22,31 +24,36 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-  @Autowired private AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-  @Autowired private CourierRepository courierRepository;
+  @Autowired
+  private CourierRepository courierRepository;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-  @Autowired private JwtTokenProvider tokenProvider;
+  @Autowired
+  private JwtTokenProvider tokenProvider;
 
-  public JwtAuthenticationResponse authenticateUser(LoginRequest request) {
+  public JwtAuthenticationResponse authenticateUser(LoginRequest request) throws AuthenticationException {
 
     Authentication authentication =
-        authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = tokenProvider.generateToken(authentication);
     User user = ((CustomUserDetails) authentication.getPrincipal()).getUser();
 
-    return new JwtAuthenticationResponse(jwt);
+    return new JwtAuthenticationResponse(jwt, user);
   }
 
-  public User registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
+  public JwtAuthenticationResponse registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
 
     Optional<User> dbUser = userRepository.findByEmail(request.getEmail());
     if (dbUser.isPresent()) {
@@ -66,6 +73,13 @@ public class AuthService {
     courier.setUser(user);
     courierRepository.save(courier);
 
-    return user;
+    Authentication authentication =
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    String jwt = tokenProvider.generateToken(authentication);
+
+    return new JwtAuthenticationResponse(jwt, user);
   }
 }

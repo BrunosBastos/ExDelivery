@@ -13,9 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tqs.exdelivery.security.CustomUserDetailsService;
 import tqs.exdelivery.security.JwtAuthenticationEntryPoint;
 import tqs.exdelivery.security.JwtAuthenticationFilter;
-import tqs.exdelivery.security.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
