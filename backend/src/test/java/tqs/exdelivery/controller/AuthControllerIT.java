@@ -12,8 +12,7 @@ import tqs.exdelivery.pojo.RegisterRequest;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -27,7 +26,6 @@ class AuthControllerIT {
   private static RegisterRequest registerRequest;
   private static LoginRequest validLoginRequest;
   private static LoginRequest invalidLoginRequest;
-
   private static String baseUrl;
 
   @BeforeAll
