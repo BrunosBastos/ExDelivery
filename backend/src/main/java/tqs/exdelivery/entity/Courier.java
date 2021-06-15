@@ -21,7 +21,8 @@ public class Courier {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column private double reputation;
+  @Column
+  private double reputation;
 
   @Column(nullable = false)
   private double lat;
