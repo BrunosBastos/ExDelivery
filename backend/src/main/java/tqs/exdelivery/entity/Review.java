@@ -12,19 +12,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Review {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private int rating;
+  private int rating;
 
-    private String comment;
+  private String comment;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "courier_id", referencedColumnName = "id")
-    private Courier courier;
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "courier_id", referencedColumnName = "id")
+  private Courier courier;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "deliver_id", referencedColumnName = "id")
-    private Delivery delivery;
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "deliver_id", referencedColumnName = "id")
+  private Delivery delivery;
 }
