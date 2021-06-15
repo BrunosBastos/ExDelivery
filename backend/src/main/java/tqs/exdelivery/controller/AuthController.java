@@ -27,7 +27,7 @@ public class AuthController {
       JwtAuthenticationResponse jwt = service.registerUser(request);
       return ResponseEntity.status(HttpStatus.OK).body(jwt);
     } catch (EmailAlreadyInUseException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This email is already in use");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
   }
 
