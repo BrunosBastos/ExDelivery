@@ -98,7 +98,6 @@ class AuthControllerTest {
                 .post("api/v1/register")
                 .then()
                 .assertThat()
-                .statusCode(400)
                 .statusLine("400 This email is already in use");
 
         verify(authService, times(1)).registerUser(any());
