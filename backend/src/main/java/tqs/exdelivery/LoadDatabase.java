@@ -69,13 +69,13 @@ class LoadDatabase {
               });
 
       Delivery delivery1 =
-          new Delivery(1L, 1L, LoadDatabase.DELIVERED_STATE, LoadDatabase.DELIVERY_HOST, courier1);
+          new Delivery(1L, 1L, 40.23123, 50.63244, LoadDatabase.DELIVERED_STATE, LoadDatabase.DELIVERY_HOST, courier1);
       Delivery delivery2 =
-          new Delivery(2L, 2L, LoadDatabase.DELIVERED_STATE, LoadDatabase.DELIVERY_HOST, courier1);
-      Delivery delivery3 = new Delivery(3L, 3L, "accepted", LoadDatabase.DELIVERY_HOST, courier1);
+          new Delivery(2L, 2L, 44.32132, 55.32132, LoadDatabase.DELIVERED_STATE, LoadDatabase.DELIVERY_HOST, courier1);
+      Delivery delivery3 = new Delivery(3L, 3L, 44.32132, 51.32132,  "assigned", LoadDatabase.DELIVERY_HOST, courier1);
       Delivery delivery4 =
-          new Delivery(4L, 4L, LoadDatabase.DELIVERED_STATE, LoadDatabase.DELIVERY_HOST, courier2);
-      Delivery delivery5 = new Delivery(5L, 4L, "pending", LoadDatabase.DELIVERY_HOST, courier2);
+          new Delivery(4L, 4L, 43.32132, 56.32132,  LoadDatabase.DELIVERED_STATE, LoadDatabase.DELIVERY_HOST, courier2);
+      Delivery delivery5 = new Delivery(5L, 4L, 42.32132, 54.32132, "pending", LoadDatabase.DELIVERY_HOST, null);
       Arrays.asList(delivery1, delivery2, delivery3, delivery4, delivery5)
           .forEach(deliveries::save);
 

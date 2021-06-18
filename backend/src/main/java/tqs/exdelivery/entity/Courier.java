@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.Transient;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Courier {
   private long id;
 
   @Column
+  @ColumnDefault("2.5")
   private double reputation;
 
   @Column(nullable = false)
