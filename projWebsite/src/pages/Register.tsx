@@ -80,6 +80,7 @@ const Register = () => {
                 })
                 .then((res) => {
                   if (res && res.user) {
+                    console.log(res)
                     useAuthStore.getState().login(res.accessToken, res.user)
                     notifySuccess("Successfully registered")
                     navigate('/app/dashboard', { replace: true });
