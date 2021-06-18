@@ -6,7 +6,7 @@ WORKDIR ./
 # add `//node_modules/.bin` to $PATH
 ENV PATH ./node_modules/.bin:$PATH
 
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
 #use the minified build file for production, not now - npm start is for development.
 #COPY ./build/* ./public/

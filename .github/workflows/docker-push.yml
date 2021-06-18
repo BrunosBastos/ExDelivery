@@ -1,0 +1,28 @@
+
+name: Push to DockerHub
+
+on:
+  pull_request:
+      branches:
+          - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: docker login
+      env:
+        DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }} 
+      run: |
+        echo $DOCKER_PASSWORD | docker login https://docker.pkg.github.com -u BrunosBastos --password-stdin     
+    - name: Build backend
+      run: |
+        docker build ./backend -t docker.pkg.github.com/brunosbastos/exdelivery/backend:latest
+    - name: Build Frontend
+      run: |
+        docker build ./projWebsite -t docker.pkg.github.com/brunosbastos/exdelivery/frontend:latest
+    - name: docker push
+      run: |
+        docker push docker.pkg.github.com/brunosbastos/exdelivery/backend:latest
+        docker push docker.pkg.github.com/brunosbastos/exdelivery/frontend:latest
