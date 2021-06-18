@@ -1,4 +1,4 @@
-import { MEDEX_API_BASE_URL } from '../config/index';
+import { EXDELIVERY_API_BASE_URL } from '../config/index';
 import useAuthStore from 'src/stores/useAuthStore';
 
 
@@ -6,7 +6,7 @@ class ProductService {
 
 
     getAllProducts(){
-        return fetch(MEDEX_API_BASE_URL + 'products', {
+        return fetch(EXDELIVERY_API_BASE_URL + 'products', {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -18,7 +18,7 @@ class ProductService {
     }
 
     getProduct(id: any){
-        return fetch(MEDEX_API_BASE_URL + 'products/' + id, {
+        return fetch(EXDELIVERY_API_BASE_URL + 'products/' + id, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -30,7 +30,7 @@ class ProductService {
     }
     addnewProduct(name:string, description: string,address:string, price: number, stock: number, photo: string, supplier: number ){
 
-        return fetch(MEDEX_API_BASE_URL + 'products', {
+        return fetch(EXDELIVERY_API_BASE_URL + 'products', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -51,7 +51,7 @@ class ProductService {
 
     updateProduct(prodid:number ,name:string, description: string, price: number, stock: number, photo: string, supplier: number ){
 
-            return fetch(MEDEX_API_BASE_URL + 'products/' + prodid, {
+            return fetch(EXDELIVERY_API_BASE_URL + 'products/' + prodid, {
                 method: 'PUT',
                 mode: 'cors',
                 headers: {
