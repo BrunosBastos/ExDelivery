@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
   List<Delivery> findAllByState(String state);
+  boolean existsByPurchaseHostAndPurchaseId(String purchaseHost, Long purchaseId);
 }

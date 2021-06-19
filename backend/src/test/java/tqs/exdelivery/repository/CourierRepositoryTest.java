@@ -12,7 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class CourierRepositoryTest {
+class CourierRepositoryTest {
 
   @Autowired private TestEntityManager entityManager;
   @Autowired private CourierRepository courierRepository;

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DeliveryServiceTest {
+class DeliveryServiceTest {
 
   private final String DELIVERY_HOST = "http:localhost:8080/";
   Courier c1;
@@ -52,13 +52,17 @@ public class DeliveryServiceTest {
 
   @Test
   void whenGetAssignedDeliveries_thenReturnDeliveries() {
+    when(deliveryRepository.existsByPurchaseHostAndPurchaseId(any(), any())).thenReturn(false);
+
     var deliveries = deliveryService.getAssignedDeliveries();
     assertThat(deliveries).hasSize(2);
     verify(deliveryRepository, VerificationModeFactory.times(1)).findAllByState(any());
   }
 
   @Test
-  void whenAssignDeliveryWithNoCourier_thenReturnNull() {
+  void whenAssignDeliveryWithNoCourier_thenReturnPendingDelivery() {
+    when(deliveryRepository.existsByPurchaseHostAndPurchaseId(any(), any())).thenReturn(false);
+
     when(courierService.assignBestCourier(any())).thenReturn(null);
     var delivery = deliveryService.assignDelivery(delPojo1);
     assertThat(delivery.getCourier()).isNull();
@@ -67,11 +71,22 @@ public class DeliveryServiceTest {
   }
 
   @Test
-  void whenAssignDeliveryWithValidCourier_thenReturnNull() {
+  void whenAssignDeliveryWithValidCourier_thenReturnAssignedDelivery() {
+    when(deliveryRepository.existsByPurchaseHostAndPurchaseId(any(), any())).thenReturn(false);
+
     when(courierService.assignBestCourier(any())).thenReturn(c1);
     var delivery = deliveryService.assignDelivery(delPojo1);
     assertThat(delivery.getCourier().getId()).isEqualTo(c1.getId());
     assertThat(delivery.getState()).isEqualTo("assigned");
     verify(courierService, VerificationModeFactory.times(1)).assignBestCourier(any());
   }
+  @Test
+  void whenAssignExistingDelivery_thenReturnNull() {
+    when(deliveryRepository.existsByPurchaseHostAndPurchaseId(any(), any())).thenReturn(true);
+    var delivery = deliveryService.assignDelivery(delPojo1);
+    assertThat(delivery).isNull();
+    verify(deliveryRepository, VerificationModeFactory.times(1)).existsByPurchaseHostAndPurchaseId(any(), any());
+  }
+
+
 }

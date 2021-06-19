@@ -31,7 +31,6 @@ class DeliveryControllerIT {
   @Order(1)
   void whenCreateDeliveryAndAvailableCouriers_thenReturnAssignedDelivery() {
     var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
-
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(delPojo1)
@@ -53,9 +52,10 @@ class DeliveryControllerIT {
         .and()
         .body("courier", is(notNullValue()));
 
+    var delPojo2 = new DeliveryPOJO(DELIVERY_HOST, 2L, 0, 0);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(delPojo1)
+        .body(delPojo2)
         .post("api/v1/deliveries")
         .then()
         .assertThat()
@@ -64,9 +64,10 @@ class DeliveryControllerIT {
         .and()
         .body("state", is("assigned"));
 
+    var delPojo3 = new DeliveryPOJO(DELIVERY_HOST, 3L, 0, 0);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(delPojo1)
+        .body(delPojo3)
         .post("api/v1/deliveries")
         .then()
         .assertThat()
@@ -79,27 +80,43 @@ class DeliveryControllerIT {
   @Test
   @Order(2)
   void whenCreateDeliveryAndNoAvailableCourier_thenReturnPendingDelivery() {
-    var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
+    var delPojo4 = new DeliveryPOJO(DELIVERY_HOST, 4L, 0, 0);
 
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(delPojo1)
+        .body(delPojo4)
         .post("api/v1/deliveries")
         .then()
         .assertThat()
         .statusCode(200)
         .contentType(ContentType.JSON)
         .and()
-        .body("purchaseHost", is(delPojo1.getPurchaseHost()))
+        .body("purchaseHost", is(delPojo4.getPurchaseHost()))
         .and()
-        .body("purchaseId", is(delPojo1.getPurchaseId().intValue()))
+        .body("purchaseId", is(delPojo4.getPurchaseId().intValue()))
         .and()
-        .body("lat", is((float) delPojo1.getLat()))
+        .body("lat", is((float) delPojo4.getLat()))
         .and()
-        .body("lon", is((float) delPojo1.getLon()))
+        .body("lon", is((float) delPojo4.getLon()))
         .and()
         .body("state", is("pending"))
         .and()
         .body("courier", is(nullValue()));
+  }
+
+  @Test
+  @Order(3)
+  void whenCreateAlreadyExistingDelivery_thenReturnError() {
+    var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
+
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .body(delPojo1)
+            .post("api/v1/deliveries")
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .and()
+            .statusLine("400 Already exists a delivery for that purchase.");
   }
 }

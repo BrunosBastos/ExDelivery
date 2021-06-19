@@ -15,6 +15,11 @@ public class DeliveryService {
   @Autowired private CourierService courierService;
 
   public Delivery assignDelivery(DeliveryPOJO deliveryPOJO) {
+    if (deliveryRepository.existsByPurchaseHostAndPurchaseId(
+        deliveryPOJO.getPurchaseHost(), deliveryPOJO.getPurchaseId())) {
+      return null;
+    }
+
     var delivery =
         new Delivery(
             deliveryPOJO.getPurchaseHost(),

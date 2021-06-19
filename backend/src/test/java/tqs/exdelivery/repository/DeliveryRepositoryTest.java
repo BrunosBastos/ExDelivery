@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class DeliveryRepositoryTest {
+  private final String DELIVERY_HOST = "http:localhost:8080/";
 
   @Autowired private TestEntityManager entityManager;
   @Autowired private DeliveryRepository deliveryRepository;
@@ -67,5 +68,29 @@ class DeliveryRepositoryTest {
           .extracting(Delivery::getState)
           .contains(delivery.getState());
     }
+  }
+
+  @Test
+  void whenExistsDeliveryByPurchaseHostAndByPurchaseId_thenReturnExists() {
+    Delivery d1 = new Delivery();
+    d1.setPurchaseHost(DELIVERY_HOST);
+    d1.setPurchaseId(1L);
+    entityManager.persistAndFlush(d1);
+
+    boolean existsDelivery = deliveryRepository.existsByPurchaseHostAndPurchaseId(d1.getPurchaseHost(), d1.getPurchaseId());
+
+    assertThat(existsDelivery).isTrue();
+  }
+
+  @Test
+  void whenDoesntExistDeliveryByPurchaseHostAndByPurchaseId_thenReturnsFalse() {
+    Delivery d1 = new Delivery();
+    d1.setPurchaseHost(DELIVERY_HOST);
+    d1.setPurchaseId(1L);
+    entityManager.persistAndFlush(d1);
+
+    boolean existsDelivery = deliveryRepository.existsByPurchaseHostAndPurchaseId(d1.getPurchaseHost(), 2L);
+
+    assertThat(existsDelivery).isFalse();
   }
 }
