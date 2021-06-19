@@ -35,21 +35,22 @@ class DeliveryControllerIT {
   @Order(1)
   void whenGetAllDeliveries_thenReturnAllDeliveries() {
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries?page=0&recent=true")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("$.size()", is(5));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("$.size()", is(5));
   }
 
   @Test
   @WithMockUser(value = "tiago@gmail.com")
   @Order(2)
   void whenGetMyDeliveriesDescending_thenReturnDeliveries() {
-    var deliveries = RestAssuredMockMvc.given()
+    var deliveries =
+        RestAssuredMockMvc.given()
             .header("Content-Type", "application/json")
             .get("api/v1/deliveries/me?page=0&recent=true")
             .then()
@@ -69,7 +70,8 @@ class DeliveryControllerIT {
   @WithMockUser(value = "tiago@gmail.com")
   @Order(3)
   void whenGetMyDeliveriesAscending_thenReturnDeliveries() {
-    var deliveries = RestAssuredMockMvc.given()
+    var deliveries =
+        RestAssuredMockMvc.given()
             .header("Content-Type", "application/json")
             .get("api/v1/deliveries/me?page=0&recent=false")
             .then()
@@ -90,15 +92,16 @@ class DeliveryControllerIT {
   @Order(4)
   void whenGetCourierDeliveries_thenReturnCourierDeliveries() {
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries?page=0&recent=true&courierEmail=tiago@gmail.com")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("$.size()", is(3));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries?page=0&recent=true&courierEmail=tiago@gmail.com")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("$.size()", is(3));
   }
+
   @Test
   @Order(5)
   void whenCreateDeliveryAndAvailableCouriers_thenReturnAssignedDelivery() {
@@ -182,13 +185,13 @@ class DeliveryControllerIT {
     var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 10L, 0, 0);
 
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .body(delPojo1)
-            .post("api/v1/deliveries")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .and()
-            .statusLine("400 Already exists a delivery for that purchase.");
+        .header("Content-Type", "application/json")
+        .body(delPojo1)
+        .post("api/v1/deliveries")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Already exists a delivery for that purchase.");
   }
 }

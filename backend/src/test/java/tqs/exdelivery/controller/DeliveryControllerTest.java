@@ -82,7 +82,8 @@ class DeliveryControllerTest {
   @WithMockUser(value = "test")
   void whenIAmCourierAndIGetMyDeliveries_thenReturnMyDelivery() {
     Page<Delivery> page = new PageImpl<>(Arrays.asList(del1));
-    when(deliveryService.getCourierDeliveries(validCourier.getCourier(), 0, true)).thenReturn(page.getContent());
+    when(deliveryService.getCourierDeliveries(validCourier.getCourier(), 0, true))
+        .thenReturn(page.getContent());
     when(userRepository.findByEmail(any())).thenReturn(Optional.of(validCourier));
 
     RestAssuredMockMvc.given()
@@ -118,17 +119,17 @@ class DeliveryControllerTest {
   @WithMockUser(value = "test")
   void whenIAmAdminAndIGetAllDeliveries_thenReturnAllDelivery() {
     when(userRepository.findByEmail(any())).thenReturn(Optional.of(admin));
-    when(deliveryService.getDeliveries(null, 0,true)).thenReturn(Arrays.asList(del1));
+    when(deliveryService.getDeliveries(null, 0, true)).thenReturn(Arrays.asList(del1));
 
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries?page=0&recent=true")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("$.size()", is(1));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("$.size()", is(1));
     verify(deliveryService, times(1)).getDeliveries(null, 0, true);
     verify(userRepository, times(1)).findByEmail(any());
   }
@@ -140,14 +141,14 @@ class DeliveryControllerTest {
     when(deliveryService.getDeliveries("tiago@gmail.com", 0, true)).thenReturn(Arrays.asList(del1));
 
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries?page=0&recent=true&courierEmail=tiago@gmail.com")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("$.size()", is(1));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries?page=0&recent=true&courierEmail=tiago@gmail.com")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("$.size()", is(1));
     verify(deliveryService, times(1)).getDeliveries("tiago@gmail.com", 0, true);
     verify(userRepository, times(1)).findByEmail(any());
   }
@@ -157,12 +158,12 @@ class DeliveryControllerTest {
   void whenIAmNotAdminAndIGetAllDeliveries_thenReturnError() {
     when(userRepository.findByEmail(any())).thenReturn(Optional.of(validCourier));
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries?page=0&recent=true")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .statusLine("400 User not allowed.");
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 User not allowed.");
     verify(userRepository, times(1)).findByEmail(any());
   }
 }

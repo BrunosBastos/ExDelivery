@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 public class DeliveryService {
-  private final int PAGE_SIZE = 10;
+  private static final int PAGE_SIZE = 10;
 
   @Autowired private DeliveryRepository deliveryRepository;
 
@@ -50,8 +50,8 @@ public class DeliveryService {
 
   public List<Delivery> getCourierDeliveries(Courier courier, int page, boolean recent) {
     Pageable pageable =
-            PageRequest.of(
-                    page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
+        PageRequest.of(
+            page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
 
     return deliveryRepository.findAllByCourier(courier, pageable).getContent();
   }

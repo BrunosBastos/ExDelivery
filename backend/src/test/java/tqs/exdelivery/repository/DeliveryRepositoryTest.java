@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -81,17 +80,17 @@ class DeliveryRepositoryTest {
     Delivery d1 = new Delivery();
     Delivery d2 = new Delivery();
     Arrays.asList(d1, d2)
-            .forEach(
-                    delivery -> {
-                      entityManager.persistAndFlush(delivery);
-                    });
+        .forEach(
+            delivery -> {
+              entityManager.persistAndFlush(delivery);
+            });
 
     Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
     var deliveryList = deliveryRepository.findAll(pageable);
     assertThat(deliveryList)
-            .hasSize(2)
-            .extracting(Delivery::getId)
-            .contains(d1.getId(), d2.getId());
+        .hasSize(2)
+        .extracting(Delivery::getId)
+        .contains(d1.getId(), d2.getId());
   }
 
   @Test
@@ -123,7 +122,7 @@ class DeliveryRepositoryTest {
 
   @Test
   void whenFindAllDeliveriesByValidCourier_thenReturnCourierDeliveries() {
-    var user = new User("tiago@gmail.com","string","Tiago", false, null);
+    var user = new User("tiago@gmail.com", "string", "Tiago", false, null);
     entityManager.persistAndFlush(user);
 
     var courier = new Courier(3.5, 0.0, 0.0, user);
@@ -135,15 +134,12 @@ class DeliveryRepositoryTest {
 
     Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
     var deliveryList = deliveryRepository.findAllByCourier(courier, pageable);
-    assertThat(deliveryList)
-            .hasSize(1)
-            .extracting(Delivery::getCourier)
-            .contains(courier);
+    assertThat(deliveryList).hasSize(1).extracting(Delivery::getCourier).contains(courier);
   }
 
   @Test
   void whenFindAllDeliveriesByInvalidCourier_thenReturnEmpty() {
-    var user = new User("tiago@gmail.com","string","Tiago", false, null);
+    var user = new User("tiago@gmail.com", "string", "Tiago", false, null);
     entityManager.persistAndFlush(user);
 
     var courier = new Courier(3.5, 0.0, 0.0, user);
@@ -156,7 +152,7 @@ class DeliveryRepositoryTest {
 
   @Test
   void whenFindAllDeliveriesByCourierUserEmail_thenReturnCourierDeliveries() {
-    var user = new User("tiago@gmail.com","string","Tiago", false, null);
+    var user = new User("tiago@gmail.com", "string", "Tiago", false, null);
     entityManager.persistAndFlush(user);
 
     var courier = new Courier(3.5, 0.0, 0.0, user);
@@ -167,11 +163,9 @@ class DeliveryRepositoryTest {
     entityManager.persistAndFlush(d1);
 
     Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
-    var deliveryList = deliveryRepository.findAllByCourierUserEmail(courier.getUser().getEmail(), pageable);
-    assertThat(deliveryList)
-              .hasSize(1)
-              .extracting(Delivery::getCourier)
-              .contains(courier);
+    var deliveryList =
+        deliveryRepository.findAllByCourierUserEmail(courier.getUser().getEmail(), pageable);
+    assertThat(deliveryList).hasSize(1).extracting(Delivery::getCourier).contains(courier);
   }
 
   @Test
