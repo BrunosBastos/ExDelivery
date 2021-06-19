@@ -57,8 +57,10 @@ public class DeliveryServiceTest {
   @Test
   void whenAssignDeliveryWithNoCourier_thenReturnNull() {
     when(courierService.assignBestCourier(any())).thenReturn(null);
-    var courier = deliveryService.assignDelivery(delPojo1);
-    assertThat(courier).isNull();
+    var delivery = deliveryService.assignDelivery(delPojo1);
+    assertThat(delivery.getCourier()).isNull();
+    assertThat(delivery.getState()).isEqualTo("pending");
+    verify(courierService, VerificationModeFactory.times(1)).assignBestCourier(any());
   }
 
   @Test
@@ -66,5 +68,7 @@ public class DeliveryServiceTest {
     when(courierService.assignBestCourier(any())).thenReturn(c1);
     var delivery = deliveryService.assignDelivery(delPojo1);
     assertThat(delivery.getCourier().getId()).isEqualTo(c1.getId());
+    assertThat(delivery.getState()).isEqualTo("assigned");
+    verify(courierService, VerificationModeFactory.times(1)).assignBestCourier(any());
   }
 }

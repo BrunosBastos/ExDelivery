@@ -55,20 +55,4 @@ class DeliveryControllerTest {
 
     verify(deliveryService, times(1)).assignDelivery(delPojo1);
   }
-
-  @Test
-  void whenAssignDeliveryWithoutAvailableCouriers_thenReturnError() {
-    when(deliveryService.assignDelivery(delPojo1)).thenReturn(null);
-
-    RestAssuredMockMvc.given()
-        .header("Content-Type", "application/json")
-        .body(delPojo1)
-        .post("api/v1/deliveries")
-        .then()
-        .assertThat()
-        .statusCode(400)
-        .statusLine("400 Could not assign the Delivery");
-
-    verify(deliveryService, times(1)).assignDelivery(delPojo1);
-  }
 }

@@ -17,17 +17,17 @@ public class DeliveryService {
   public Delivery assignDelivery(DeliveryPOJO deliveryPOJO) {
     var delivery =
         new Delivery(
-            deliveryPOJO.getHost(),
+            deliveryPOJO.getPurchaseHost(),
             deliveryPOJO.getPurchaseId(),
             deliveryPOJO.getLat(),
             deliveryPOJO.getLon());
 
     var courier = courierService.assignBestCourier(deliveryPOJO);
-    if (courier == null) {
-      return null;
+
+    if (courier != null) {
+      delivery.setCourier(courier);
+      delivery.setState("assigned");
     }
-    delivery.setCourier(courier);
-    delivery.setState("assigned");
     deliveryRepository.save(delivery);
 
     return delivery;
