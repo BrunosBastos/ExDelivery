@@ -24,26 +24,22 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-  @Autowired
-  private AuthenticationManager authenticationManager;
+  @Autowired private AuthenticationManager authenticationManager;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-  @Autowired
-  private CourierRepository courierRepository;
+  @Autowired private CourierRepository courierRepository;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  @Autowired private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  private JwtTokenProvider tokenProvider;
+  @Autowired private JwtTokenProvider tokenProvider;
 
-  public JwtAuthenticationResponse authenticateUser(LoginRequest request) throws AuthenticationException {
+  public JwtAuthenticationResponse authenticateUser(LoginRequest request)
+      throws AuthenticationException {
 
     Authentication authentication =
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -53,7 +49,8 @@ public class AuthService {
     return new JwtAuthenticationResponse(jwt, user);
   }
 
-  public JwtAuthenticationResponse registerUser(RegisterRequest request) throws EmailAlreadyInUseException {
+  public JwtAuthenticationResponse registerUser(RegisterRequest request)
+      throws EmailAlreadyInUseException {
 
     Optional<User> dbUser = userRepository.findByEmail(request.getEmail());
     if (dbUser.isPresent()) {
@@ -74,8 +71,8 @@ public class AuthService {
     courierRepository.save(courier);
 
     Authentication authentication =
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = tokenProvider.generateToken(authentication);

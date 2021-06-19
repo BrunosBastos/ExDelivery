@@ -1,5 +1,6 @@
 package tqs.exdelivery.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,20 +10,32 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table
-@NoArgsConstructor
+@JsonSerialize
 @AllArgsConstructor
+@NoArgsConstructor
 public class Delivery {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Long purchaseId;
+  @Column private Long purchaseId;
 
-  private String state;
+  @Column private double lat;
 
-  private String host;
+  @Column private double lon;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
-  @JoinColumn(name = "courier_id", referencedColumnName = "id")
+  @Column private String state = "pending";
+
+  @Column private String purchaseHost;
+
+  @ManyToOne
+  @JoinColumn(name = "deliveryCourierId", referencedColumnName = "id")
   private Courier courier;
+
+  public Delivery(String purchaseHost, Long purchaseId, double lat, double lon) {
+    this.purchaseHost = purchaseHost;
+    this.purchaseId = purchaseId;
+    this.lat = lat;
+    this.lon = lon;
+  }
 }

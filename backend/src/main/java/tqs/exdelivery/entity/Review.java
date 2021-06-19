@@ -1,5 +1,6 @@
 package tqs.exdelivery.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table
+@JsonSerialize
 @NoArgsConstructor
 @AllArgsConstructor
 public class Review {
@@ -16,15 +18,15 @@ public class Review {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private int rating;
+  @Column private int rating;
 
-  private String comment;
+  @Column private String comment;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
-  @JoinColumn(name = "courier_id", referencedColumnName = "id")
+  @ManyToOne
+  @JoinColumn(name = "reviewCourierId", referencedColumnName = "id")
   private Courier courier;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
-  @JoinColumn(name = "deliver_id", referencedColumnName = "id")
+  @ManyToOne
+  @JoinColumn(name = "reviewDeliveryId", referencedColumnName = "id")
   private Delivery delivery;
 }

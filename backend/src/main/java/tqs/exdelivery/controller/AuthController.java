@@ -18,8 +18,7 @@ import tqs.exdelivery.service.AuthService;
 @RequestMapping("/api/v1")
 public class AuthController {
 
-  @Autowired
-  private AuthService service;
+  @Autowired private AuthService service;
 
   @PostMapping("/register")
   public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody RegisterRequest request) {
@@ -37,7 +36,8 @@ public class AuthController {
       JwtAuthenticationResponse jwt = service.authenticateUser(request);
       return ResponseEntity.status(HttpStatus.OK).body(jwt);
     } catch (RuntimeException e) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The credentials provided are incorrect");
+      throw new ResponseStatusException(
+          HttpStatus.UNAUTHORIZED, "The credentials provided are incorrect");
     }
   }
 }
