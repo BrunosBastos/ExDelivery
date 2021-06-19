@@ -87,7 +87,7 @@ public class DeliveryService {
 
   public Delivery confirmDelivery(Long deliveryId, Courier courier) {
     var deliverydb = deliveryRepository.findById(deliveryId);
-    if(deliverydb.isEmpty() || !deliverydb.get().getState().equals(DELIVERY_ASSIGNED) && deliverydb.get().getCourier().getId() != courier.getId()) {
+    if(deliverydb.isEmpty() || !deliverydb.get().getState().equals(DELIVERY_ASSIGNED) || deliverydb.get().getCourier().getId() != courier.getId()) {
       return null;
     }
     var delivery = deliverydb.get();

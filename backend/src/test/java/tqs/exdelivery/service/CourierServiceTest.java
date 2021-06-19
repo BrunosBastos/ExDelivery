@@ -44,8 +44,8 @@ class CourierServiceTest {
     c2 = new Courier(2L, 5, 10, 20, null);
     c3 = new Courier(3L, 3, 10, 20, null);
 
-    d1 = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, c1);
-    d2 = new Delivery(2L, 2L, 50.23123, 50.63244, "pending", DELIVERY_HOST, null);
+    d1 = new Delivery(1L, 1L, 0, 0, "delivered", DELIVERY_HOST, c1);
+    d2 = new Delivery(2L, 2L, 0, 0, "pending", DELIVERY_HOST, null);
 
     delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
 
