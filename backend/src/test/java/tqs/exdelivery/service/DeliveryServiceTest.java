@@ -7,12 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.*;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
-import org.springframework.data.domain.Page;
+
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,11 +92,15 @@ class DeliveryServiceTest {
   }
 
   @Test
-  void whenGetCourierDeliveries_thenReturnDeliveriesPage() {
-    Page<Delivery> page = new PageImpl<Delivery>(Arrays.asList(d1));
-    when(deliveryService.getCourierDeliveries(any(), any())).thenReturn(page);
-    //when(deliveryRepository.findAllByCourier(any())).thenReturn(Page.of());
+  void whenGetCourierDeliveries_thenReturnDeliveries() {
+    Page<Delivery> page = new PageImpl<>(Arrays.asList(d1));
+    when(deliveryRepository.findAllByCourier(any(), any())).thenReturn(page);
+    Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
+    var deliveryPage = deliveryService.getCourierDeliveries(c1, pageable);
+    assertThat(deliveryPage.getContent()).hasSize(1);
+    assertThat(deliveryPage.getContent().get(0).getCourier().getId()).isEqualTo(c1.getId());
+    assertThat(deliveryPage.getContent().get(0).getId()).isEqualTo(d1.getId());
   }
 
 }

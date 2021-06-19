@@ -51,7 +51,7 @@ public class DeliveryController {
   }
 
   @GetMapping("/deliveries")
-  public ResponseEntity<List<Delivery>> getDeliveries(@Valid @RequestBody DeliveryPOJO deliveryPOJO, Authentication authentication) throws UserNotFoundException{
+  public ResponseEntity<List<Delivery>> getDeliveries(Authentication authentication) throws UserNotFoundException{
     var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
     if (!user.isSuperUser()) {
       throw new ResponseStatusException(
