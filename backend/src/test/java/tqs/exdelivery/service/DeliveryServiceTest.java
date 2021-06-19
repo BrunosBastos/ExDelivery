@@ -17,12 +17,12 @@ import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -31,6 +31,8 @@ class DeliveryServiceTest {
   Courier c1;
   Delivery d1;
   Delivery d2;
+  Delivery d3;
+  Delivery d4;
   DeliveryPOJO delPojo1;
 
   @Mock(lenient = true)
@@ -47,8 +49,14 @@ class DeliveryServiceTest {
     user.setEmail("tiago@gmail.com");
     c1 = new Courier(1L, 5, 0.0, 0.0, user);
 
+    var user2 = new User();
+    user2.setEmail("tiago@gmail.com");
+    var c2 = new Courier(2L, 5, 0, 0, user2);
+
     d1 = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, c1);
     d2 = new Delivery(2L, 2L, 50.23123, 50.63244, "pending", DELIVERY_HOST, null);
+    d3 = new Delivery(3L, 3L, 10, 20, "assigned", DELIVERY_HOST, c2);
+    d4 = new Delivery(4L, 4L, 10, 20, "assigned", DELIVERY_HOST, c1);
 
     delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
 
@@ -129,5 +137,47 @@ class DeliveryServiceTest {
     assertThat(deliveryPage).hasSize(1);
     assertThat(deliveryPage.get(0).getCourier().getId()).isEqualTo(c1.getId());
     assertThat(deliveryPage.get(0).getId()).isEqualTo(d1.getId());
+  }
+
+  @Test
+  void whenConfirmDeliveryWithInvalidDeliveryId_thenReturnNull() {
+    when(deliveryRepository.findById(1000L)).thenReturn(Optional.empty());
+    var delivery = deliveryService.confirmDelivery(1000L, c1);
+    assertThat(delivery).isNull();
+  }
+
+  @Test
+  void whenConfirmDeliveryNotAssigned_thenReturnNull() {
+    when(deliveryRepository.findById(2L)).thenReturn(Optional.of(d2));
+    var delivery = deliveryService.confirmDelivery(2L, c1);
+    assertThat(delivery).isNull();
+  }
+
+  @Test
+  void whenConfirmDeliveryNotAssignedToCourier_thenReturnNull() {
+    when(deliveryRepository.findById(3L)).thenReturn(Optional.of(d3));
+    var delivery = deliveryService.confirmDelivery(3L, c1);
+    assertThat(delivery).isNull();
+  }
+
+  @Test
+  void whenConfirmDeliveryWithAssignedCourier_thenReturnUpdatedDelivery() {
+    when(deliveryRepository.findById(4L)).thenReturn(Optional.of(d4));
+    var delivery = deliveryService.confirmDelivery(4L, c1);
+    assertThat(delivery.getState()).isEqualTo("delivered");
+    verify(deliveryRepository, times(1)).save(any());
+  }
+
+  @Test
+  void whenCheckDeliveriesToAssign_thenVerifyFunctionCall() {
+
+    d3.setCourier(null);
+    d4.setCourier(null);
+    d3.setState("pending");
+    d4.setState("pending");
+
+    when(deliveryRepository.findAllByState("pending")).thenReturn(Arrays.asList(d2, d3, d4));
+    deliveryService.checkDeliveriesToAssign();
+    verify(deliveryRepository, times(3)).save(any());
   }
 }

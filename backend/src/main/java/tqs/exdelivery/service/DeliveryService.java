@@ -4,21 +4,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 
+import java.net.ConnectException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class DeliveryService {
   private static final int PAGE_SIZE = 10;
 
+  private static final String DELIVERY_ASSIGNED = "assigned";
+
+  private static final String DELIVERY_PENDING = "pending";
+
   @Autowired private DeliveryRepository deliveryRepository;
 
   @Autowired private CourierService courierService;
+
+  @Autowired private RestTemplate restTemplate;
 
   public Delivery assignDelivery(DeliveryPOJO deliveryPOJO) {
     if (deliveryRepository.existsByPurchaseHostAndPurchaseId(
@@ -33,11 +45,11 @@ public class DeliveryService {
             deliveryPOJO.getLat(),
             deliveryPOJO.getLon());
 
-    var courier = courierService.assignBestCourier(deliveryPOJO);
+    var courier = courierService.assignBestCourier(delivery);
 
     if (courier != null) {
       delivery.setCourier(courier);
-      delivery.setState("assigned");
+      delivery.setState(DELIVERY_ASSIGNED);
     }
     deliveryRepository.save(delivery);
 
@@ -45,7 +57,11 @@ public class DeliveryService {
   }
 
   public List<Delivery> getAssignedDeliveries() {
-    return deliveryRepository.findAllByState("assigned");
+    return deliveryRepository.findAllByState(DELIVERY_ASSIGNED);
+  }
+
+  public List<Delivery> getPendingDeliveries() {
+    return deliveryRepository.findAllByState(DELIVERY_PENDING);
   }
 
   public List<Delivery> getCourierDeliveries(Courier courier, int page, boolean recent) {
@@ -65,5 +81,38 @@ public class DeliveryService {
     } else {
       return deliveryRepository.findAllByCourierUserEmail(email, pageable).getContent();
     }
+  }
+
+  public Delivery confirmDelivery(Long deliveryId, Courier courier) {
+    var deliverydb = deliveryRepository.findById(deliveryId);
+    if (deliverydb.isEmpty()
+        || !deliverydb.get().getState().equals(DELIVERY_ASSIGNED)
+        || deliverydb.get().getCourier().getId() != courier.getId()) {
+      return null;
+    }
+    var delivery = deliverydb.get();
+    delivery.setState("delivered");
+    deliveryRepository.save(delivery);
+    return delivery;
+  }
+
+  public void checkDeliveriesToAssign() {
+    for (Delivery delivery : getPendingDeliveries()) {
+      var courier = courierService.assignBestCourier(delivery);
+      if (courier != null) {
+        delivery.setCourier(courier);
+        delivery.setState(DELIVERY_ASSIGNED);
+      }
+      deliveryRepository.save(delivery);
+    }
+  }
+
+  public void notifyHost(Delivery delivery) throws ConnectException {
+    var headers = new HttpHeaders();
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+    // doesnt work if service not up
+    // var response = restTemplate.exchange(delivery.getPurchaseHost(), HttpMethod.PUT, entity,
+    // String.class).getBody();
   }
 }

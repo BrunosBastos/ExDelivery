@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 @Configuration
 class LoadDatabase {
-  private static final String DELIVERY_HOST = "http:localhost:8080/";
+  private static final String DELIVERY_HOST = "http://localhost:8081/api/v1/";
   private static final String DELIVERED_STATE = "delivered";
   private static final String EXAMPLE_PASS = "string";
 

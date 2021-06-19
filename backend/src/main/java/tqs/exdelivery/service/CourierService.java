@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
-import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.CourierRepository;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class CourierService {
     return courierRepository.findAllByIdNotIn(assignedCouriers);
   }
 
-  public Courier assignBestCourier(DeliveryPOJO deliveryPOJO) {
+  public Courier assignBestCourier(Delivery delivery) {
     var availableCouriers = getAvailableCouriers();
     logger.info(availableCouriers);
     Courier bestCourier = null;
@@ -44,12 +43,12 @@ public class CourierService {
       double courierLon = Math.toRadians(courier.getLon());
       double courierLat = Math.toRadians(courier.getLat());
 
-      double dLon = Math.toRadians(deliveryPOJO.getLon()) - courierLon;
-      double dLat = Math.toRadians(deliveryPOJO.getLat()) - courierLat;
+      double dLon = Math.toRadians(delivery.getLon()) - courierLon;
+      double dLat = Math.toRadians(delivery.getLat()) - courierLat;
       double a =
           Math.pow(Math.sin(dLat / 2), 2)
               + Math.cos(courierLat)
-                  * Math.cos(Math.toRadians(deliveryPOJO.getLat()))
+                  * Math.cos(Math.toRadians(delivery.getLat()))
                   * Math.pow(Math.sin(dLon / 2), 2);
 
       double c = 2 * Math.asin(Math.sqrt(a));
