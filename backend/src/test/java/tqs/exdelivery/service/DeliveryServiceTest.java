@@ -27,10 +27,13 @@ public class DeliveryServiceTest {
   Delivery d1;
   Delivery d2;
   DeliveryPOJO delPojo1;
+
   @Mock(lenient = true)
   private DeliveryRepository deliveryRepository;
+
   @Mock(lenient = true)
   private CourierService courierService;
+
   @InjectMocks private DeliveryService deliveryService;
 
   @BeforeEach
