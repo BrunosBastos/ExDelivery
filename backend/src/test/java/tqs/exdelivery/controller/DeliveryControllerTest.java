@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.service.DeliveryService;
+
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
@@ -56,5 +59,49 @@ class DeliveryControllerTest {
         .body("lon", is((float) del1.getLon()));
 
     verify(deliveryService, times(1)).assignDelivery(delPojo1);
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenIAmCourierAndIGetMyDeliveries_thenReturnMyDelivery() {
+    Page<Delivery> page = new PageImpl<>(Arrays.asList(del1));
+    when(deliveryService.getCourierDeliveries(any(), any())).thenReturn(page);
+
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .body(delPojo1)
+            .post("api/v1/deliveries/me")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .and()
+            .body("deliveries", is(del1.getPurchaseHost()))
+            .and()
+            .body("purchaseId", is(del1.getPurchaseId().intValue()))
+            .and()
+            .body("lat", is((float) del1.getLat()))
+            .and()
+            .body("lon", is((float) del1.getLon()));
+
+    verify(deliveryService, times(1)).assignDelivery(delPojo1);
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenIAmNotCourierAndIGetMyDeliveries_thenReturnError() {
+
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenIAmAdminAndIGetAllDeliveries_thenReturnAllDelivery() {
+
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenIAmNotAdminAndIGetAllDeliveries_thenReturnError() {
+
   }
 }

@@ -38,16 +38,16 @@ public class DeliveryController {
   }
 
   @GetMapping("/deliveries/me")
-  public ResponseEntity<Page<Delivery>> getMyDeliveries(Authentication authentication, @RequestParam int page, @RequestParam boolean recent) throws UserNotFoundException {
+  public ResponseEntity<List<Delivery>> getMyDeliveries(Authentication authentication, @RequestParam int page, @RequestParam boolean recent) throws UserNotFoundException {
     var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
     if(user.getCourier() == null) {
       throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Courier does not exist");
     }
     Pageable paging = PageRequest.of(page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
-
     var deliveries = service.getCourierDeliveries(user.getCourier(), paging);
-    return ResponseEntity.ok().body(deliveries);
+
+    return ResponseEntity.ok().body(deliveries.getContent());
   }
 
   @GetMapping("/deliveries")

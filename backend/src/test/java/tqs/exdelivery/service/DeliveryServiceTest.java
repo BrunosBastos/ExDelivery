@@ -7,11 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
-
+import org.springframework.data.domain.Page;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,9 +92,10 @@ class DeliveryServiceTest {
   }
 
   @Test
-  void whenGetAllCourierDeliveries_thenReturnDeliveries() {
-
-    when(deliveryRepository.findAllByCourier(any())).thenReturn(Arrays.asList(d1));
+  void whenGetCourierDeliveries_thenReturnDeliveriesPage() {
+    Page<Delivery> page = new PageImpl<Delivery>(Arrays.asList(d1));
+    when(deliveryService.getCourierDeliveries(any(), any())).thenReturn(page);
+    //when(deliveryRepository.findAllByCourier(any())).thenReturn(Page.of());
 
   }
 
