@@ -60,8 +60,7 @@ public class CourierService {
 
       var formatstr =
           String.format(
-              "Found a new Best Courier %s with a value %s.",
-              courier.getId(), finalResult);
+              "Found a new Best Courier %s with a value %s.", courier.getId(), finalResult);
 
       if (finalResult < min) {
         logger.info(formatstr);
