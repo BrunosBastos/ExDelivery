@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
+import tqs.exdelivery.entity.User;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 
@@ -17,6 +18,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +41,9 @@ class DeliveryServiceTest {
 
   @BeforeEach
   void setUp() {
-    c1 = new Courier(1L, 5, 0.0, 0.0, null);
+    var user = new User();
+    user.setEmail("tiago@gmail.com");
+    c1 = new Courier(1L, 5, 0.0, 0.0, user);
 
     d1 = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, c1);
     d2 = new Delivery(2L, 2L, 50.23123, 50.63244, "pending", DELIVERY_HOST, null);
@@ -95,12 +99,33 @@ class DeliveryServiceTest {
   void whenGetCourierDeliveries_thenReturnDeliveries() {
     Page<Delivery> page = new PageImpl<>(Arrays.asList(d1));
     when(deliveryRepository.findAllByCourier(any(), any())).thenReturn(page);
-    Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
-    var deliveryPage = deliveryService.getCourierDeliveries(c1, pageable);
-    assertThat(deliveryPage.getContent()).hasSize(1);
-    assertThat(deliveryPage.getContent().get(0).getCourier().getId()).isEqualTo(c1.getId());
-    assertThat(deliveryPage.getContent().get(0).getId()).isEqualTo(d1.getId());
+    var deliveryPage = deliveryService.getCourierDeliveries(c1, 0, true);
+    assertThat(deliveryPage).hasSize(1);
+    assertThat(deliveryPage.get(0).getCourier().getId()).isEqualTo(c1.getId());
+    assertThat(deliveryPage.get(0).getId()).isEqualTo(d1.getId());
   }
 
+  @Test
+  void whenGetDeliveries_thenReturnDeliveries() {
+    Page<Delivery> page = new PageImpl<>(Arrays.asList(d1, d2));
+    when(deliveryRepository.findAll(any(Pageable.class))).thenReturn(page);
+
+    var deliveryPage = deliveryService.getDeliveries(null, 0, true);
+    assertThat(deliveryPage).hasSize(2);
+    assertThat(deliveryPage.get(0).getId()).isEqualTo(d1.getId());
+    assertThat(deliveryPage.get(1).getId()).isEqualTo(d2.getId());
+  }
+
+  @Test
+  void whenGetDeliveriesByCourierEmail_thenReturnCourierDeliveries() {
+    Page<Delivery> page = new PageImpl<>(Arrays.asList(d1));
+    when(deliveryRepository.findAllByCourierUserEmail(anyString(), any(Pageable.class)))
+        .thenReturn(page);
+
+    var deliveryPage = deliveryService.getDeliveries(c1.getUser().getEmail(), 0, true);
+    assertThat(deliveryPage).hasSize(1);
+    assertThat(deliveryPage.get(0).getCourier().getId()).isEqualTo(c1.getId());
+    assertThat(deliveryPage.get(0).getId()).isEqualTo(d1.getId());
+  }
 }

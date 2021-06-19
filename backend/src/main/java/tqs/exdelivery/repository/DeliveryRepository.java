@@ -12,7 +12,11 @@ import java.util.List;
 @Repository
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
   List<Delivery> findAllByState(String state);
-  List<Delivery> findAllByCourier(Courier courier);
+
+  Page<Delivery> findAllByCourierUserEmail(String courierEmail, Pageable pageable);
+
+  Page<Delivery> findAll(Pageable pageable);
+
   Page<Delivery> findAllByCourier(Courier courier, Pageable pageable);
 
   boolean existsByPurchaseHostAndPurchaseId(String purchaseHost, Long purchaseId);

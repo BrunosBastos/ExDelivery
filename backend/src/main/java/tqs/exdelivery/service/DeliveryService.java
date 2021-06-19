@@ -1,12 +1,12 @@
 package tqs.exdelivery.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
-import tqs.exdelivery.entity.User;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 
@@ -14,6 +14,8 @@ import java.util.List;
 
 @Service
 public class DeliveryService {
+  private final int PAGE_SIZE = 10;
+
   @Autowired private DeliveryRepository deliveryRepository;
 
   @Autowired private CourierService courierService;
@@ -46,11 +48,22 @@ public class DeliveryService {
     return deliveryRepository.findAllByState("assigned");
   }
 
-  public Page<Delivery> getCourierDeliveries(Courier courier, Pageable pageable) {
-    return deliveryRepository.findAllByCourier(courier, pageable);
+  public List<Delivery> getCourierDeliveries(Courier courier, int page, boolean recent) {
+    Pageable pageable =
+            PageRequest.of(
+                    page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
+
+    return deliveryRepository.findAllByCourier(courier, pageable).getContent();
   }
 
-  public List<Delivery> getAllDeliveries() {
-    return deliveryRepository.findAll();
+  public List<Delivery> getDeliveries(String email, int page, boolean recent) {
+    Pageable pageable =
+        PageRequest.of(
+            page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
+    if (email == null) {
+      return deliveryRepository.findAll(pageable).getContent();
+    } else {
+      return deliveryRepository.findAllByCourierUserEmail(email, pageable).getContent();
+    }
   }
 }

@@ -66,7 +66,7 @@ class LoadDatabase {
       User courierUser4 =
           new User(
               5L,
-              "leandro@gmail.com",
+              "leonardo@gmail.com",
               encoder.encode(LoadDatabase.EXAMPLE_PASS),
               "Leonardo",
               false,

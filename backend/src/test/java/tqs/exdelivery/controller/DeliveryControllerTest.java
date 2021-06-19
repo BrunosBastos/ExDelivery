@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.exdelivery.entity.Courier;
@@ -21,7 +22,6 @@ import tqs.exdelivery.service.DeliveryService;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +32,7 @@ class DeliveryControllerTest {
   Delivery del1;
   DeliveryPOJO delPojo1;
   User validCourier;
-  User invalidCourier;
+  User admin;
   @Autowired private MockMvc mvc;
   @MockBean private DeliveryService deliveryService;
   @MockBean private UserRepository userRepository;
@@ -49,8 +49,8 @@ class DeliveryControllerTest {
     validCourier = new User();
     validCourier.setCourier(courier);
 
-    invalidCourier = new User();
-
+    admin = new User();
+    admin.setSuperUser(true);
   }
 
   @Test
@@ -82,46 +82,87 @@ class DeliveryControllerTest {
   @WithMockUser(value = "test")
   void whenIAmCourierAndIGetMyDeliveries_thenReturnMyDelivery() {
     Page<Delivery> page = new PageImpl<>(Arrays.asList(del1));
-    when(deliveryService.getCourierDeliveries(any(), any())).thenReturn(page);
+    when(deliveryService.getCourierDeliveries(validCourier.getCourier(), 0, true)).thenReturn(page.getContent());
     when(userRepository.findByEmail(any())).thenReturn(Optional.of(validCourier));
 
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/me?page=1&recent=true")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and().body("$.size()",is(1))
-            .and().body("[0].courier.id", is((int)validCourier.getCourier().getId()));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/me?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("$.size()", is(1))
+        .and()
+        .body("[0].courier.id", is((int) validCourier.getCourier().getId()));
 
-    verify(deliveryService, times(1)).getCourierDeliveries(any(), any());
+    verify(deliveryService, times(1)).getCourierDeliveries(validCourier.getCourier(), 0, true);
   }
 
   @Test
   @WithMockUser(value = "test")
   void whenIAmNotCourierAndIGetMyDeliveries_thenReturnError() {
-    when(userRepository.findByEmail(any())).thenReturn(Optional.of(invalidCourier));
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(admin));
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/me?page=1&recent=true")
-            .then()
-            .assertThat()
-            .statusCode(400).statusLine("400 Courier does not exist");
-    verify(deliveryService, times(0)).getCourierDeliveries(any(), any());
-    verify(userRepository, times(1)).findByEmail(any());
-
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/me?page=0&recent=true")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Courier does not exist");
+    verify(userRepository, times(1)).findByEmail(anyString());
   }
 
   @Test
   @WithMockUser(value = "test")
   void whenIAmAdminAndIGetAllDeliveries_thenReturnAllDelivery() {
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(admin));
+    when(deliveryService.getDeliveries(null, 0,true)).thenReturn(Arrays.asList(del1));
 
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries?page=0&recent=true")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .and()
+            .body("$.size()", is(1));
+    verify(deliveryService, times(1)).getDeliveries(null, 0, true);
+    verify(userRepository, times(1)).findByEmail(any());
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenIAmAdminAndIGetCourierDeliveries_thenReturnAllDelivery() {
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(admin));
+    when(deliveryService.getDeliveries("tiago@gmail.com", 0, true)).thenReturn(Arrays.asList(del1));
+
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries?page=0&recent=true&courierEmail=tiago@gmail.com")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .and()
+            .body("$.size()", is(1));
+    verify(deliveryService, times(1)).getDeliveries("tiago@gmail.com", 0, true);
+    verify(userRepository, times(1)).findByEmail(any());
   }
 
   @Test
   @WithMockUser(value = "test")
   void whenIAmNotAdminAndIGetAllDeliveries_thenReturnError() {
-
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(validCourier));
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries?page=0&recent=true")
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .statusLine("400 User not allowed.");
+    verify(userRepository, times(1)).findByEmail(any());
   }
 }
