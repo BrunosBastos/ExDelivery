@@ -33,7 +33,7 @@ class DeliveryControllerIT {
   @Test
   @WithMockUser(value = "leandro@gmail.com")
   @Order(1)
-  void whenGetAllDeliveries_thenReturnAllDeliveries() {
+  void whenGetAllDescendingDeliveries_thenReturnAllDescendingDeliveries() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .get("api/v1/deliveries?page=0&recent=true")
@@ -46,9 +46,24 @@ class DeliveryControllerIT {
   }
 
   @Test
-  @WithMockUser(value = "tiago@gmail.com")
+  @WithMockUser(value = "leandro@gmail.com")
   @Order(2)
-  void whenGetMyDeliveriesDescending_thenReturnDeliveries() {
+  void whenGetAllAscendingDeliveries_thenReturnAllAscendingDeliveries() {
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries?page=0&recent=false")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .and()
+            .body("$.size()", is(5));
+  }
+
+  @Test
+  @WithMockUser(value = "tiago@gmail.com")
+  @Order(3)
+  void whenGetMyDeliveriesDescending_thenReturnDescendingDeliveries() {
     var deliveries =
         RestAssuredMockMvc.given()
             .header("Content-Type", "application/json")
@@ -68,8 +83,8 @@ class DeliveryControllerIT {
 
   @Test
   @WithMockUser(value = "tiago@gmail.com")
-  @Order(3)
-  void whenGetMyDeliveriesAscending_thenReturnDeliveries() {
+  @Order(4)
+  void whenGetMyDeliveriesAscending_thenReturnAscendingDeliveries() {
     var deliveries =
         RestAssuredMockMvc.given()
             .header("Content-Type", "application/json")
@@ -89,7 +104,7 @@ class DeliveryControllerIT {
 
   @Test
   @WithMockUser(value = "leandro@gmail.com")
-  @Order(4)
+  @Order(5)
   void whenGetCourierDeliveries_thenReturnCourierDeliveries() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -103,7 +118,7 @@ class DeliveryControllerIT {
   }
 
   @Test
-  @Order(5)
+  @Order(6)
   void whenCreateDeliveryAndAvailableCouriers_thenReturnAssignedDelivery() {
     var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 10L, 0, 0);
     RestAssuredMockMvc.given()
@@ -153,7 +168,7 @@ class DeliveryControllerIT {
   }
 
   @Test
-  @Order(6)
+  @Order(7)
   void whenCreateDeliveryAndNoAvailableCourier_thenReturnPendingDelivery() {
     var delPojo4 = new DeliveryPOJO(DELIVERY_HOST, 13L, 0, 0);
 
@@ -180,7 +195,7 @@ class DeliveryControllerIT {
   }
 
   @Test
-  @Order(7)
+  @Order(8)
   void whenCreateAlreadyExistingDelivery_thenReturnError() {
     var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 10L, 0, 0);
 
