@@ -167,6 +167,7 @@ class DeliveryControllerIT {
         .body("state", is("assigned"));
   }
 
+
   @Test
   @Order(7)
   void whenCreateDeliveryAndNoAvailableCourier_thenReturnPendingDelivery() {
@@ -193,9 +194,35 @@ class DeliveryControllerIT {
         .and()
         .body("courier", is(nullValue()));
   }
-
   @Test
   @Order(8)
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenConfirmDelivery_thenReturnDelivery() {
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .put("api/v1/deliveries/3")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .and()
+            .body("state", is("delivered"));
+
+    var delPojo3 = new DeliveryPOJO(DELIVERY_HOST, 14L, 0, 0);
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .body(delPojo3)
+            .post("api/v1/deliveries")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .contentType(ContentType.JSON)
+            .and()
+            .body("state", is("pending"));
+  }
+
+  @Test
+  @Order(9)
   void whenCreateAlreadyExistingDelivery_thenReturnError() {
     var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 10L, 0, 0);
 
@@ -209,4 +236,5 @@ class DeliveryControllerIT {
         .and()
         .statusLine("400 Already exists a delivery for that purchase.");
   }
+
 }

@@ -45,7 +45,7 @@ public class DeliveryController {
     var delivery = service.confirmDelivery(id, user.getCourier());
     if (delivery == null) {
       throw new ResponseStatusException(
-              HttpStatus.BAD_REQUEST, "Can't confirm this delivery.");
+              HttpStatus.BAD_REQUEST, "Can't confirm this delivery");
     }
 
     // check if there are free deliveries pending
