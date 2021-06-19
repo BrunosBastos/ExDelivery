@@ -50,14 +50,14 @@ class DeliveryControllerIT {
   @Order(2)
   void whenGetAllAscendingDeliveries_thenReturnAllAscendingDeliveries() {
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries?page=0&recent=false")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("$.size()", is(5));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries?page=0&recent=false")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("$.size()", is(5));
   }
 
   @Test
@@ -167,7 +167,6 @@ class DeliveryControllerIT {
         .body("state", is("assigned"));
   }
 
-
   @Test
   @Order(7)
   void whenCreateDeliveryAndNoAvailableCourier_thenReturnPendingDelivery() {
@@ -194,31 +193,32 @@ class DeliveryControllerIT {
         .and()
         .body("courier", is(nullValue()));
   }
+
   @Test
   @Order(8)
   @WithMockUser(value = "tiago@gmail.com")
   void whenConfirmDelivery_thenReturnDelivery() {
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .put("api/v1/deliveries/3")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("state", is("delivered"));
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/3")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("state", is("delivered"));
 
     var delPojo3 = new DeliveryPOJO(DELIVERY_HOST, 14L, 0, 0);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .body(delPojo3)
-            .post("api/v1/deliveries")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .contentType(ContentType.JSON)
-            .and()
-            .body("state", is("pending"));
+        .header("Content-Type", "application/json")
+        .body(delPojo3)
+        .post("api/v1/deliveries")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .and()
+        .body("state", is("pending"));
   }
 
   @Test
@@ -237,4 +237,46 @@ class DeliveryControllerIT {
         .statusLine("400 Already exists a delivery for that purchase.");
   }
 
+  @Test
+  @Order(10)
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenConfirmDeliveryAndNotAssignedCourier_thenReturnError() {
+
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/4")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Can't confirm this delivery");
+  }
+
+  @Test
+  @Order(11)
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenConfirmDeliveryAndNotAssignedStatus_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Can't confirm this delivery");
+  }
+
+  @Test
+  @Order(12)
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenConfirmDeliveryAndDeliveryDoesNotExist_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/20")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Can't confirm this delivery");
+  }
 }

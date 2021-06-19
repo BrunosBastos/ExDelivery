@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
-import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.CourierRepository;
 
 import java.util.ArrayList;

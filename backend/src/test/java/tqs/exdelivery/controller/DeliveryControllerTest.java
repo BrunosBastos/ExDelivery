@@ -173,12 +173,12 @@ class DeliveryControllerTest {
   void whenIAmNotCourierAndIConfirmDelivery_thenReturnError() {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(admin));
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .put("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .statusLine("400 Courier does not exist");
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Courier does not exist");
     verify(userRepository, times(1)).findByEmail(anyString());
   }
 
@@ -188,12 +188,12 @@ class DeliveryControllerTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validCourier));
     when(deliveryService.confirmDelivery(any(), any())).thenReturn(null);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .put("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .statusLine("400 Can't confirm this delivery");
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Can't confirm this delivery");
     verify(userRepository, times(1)).findByEmail(anyString());
   }
 
@@ -204,21 +204,19 @@ class DeliveryControllerTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validCourier));
     when(deliveryService.confirmDelivery(any(), any())).thenReturn(del1);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .put("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .body("state", is("delivered"))
-            .and()
-            .body("id", is(del1.getId()))
-            .and()
-            .body("courier.id", is((int)validCourier.getCourier().getId()));
+        .header("Content-Type", "application/json")
+        .put("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("state", is("delivered"))
+        .and()
+        .body("id", is(del1.getId()))
+        .and()
+        .body("courier.id", is((int) validCourier.getCourier().getId()));
     verify(userRepository, times(1)).findByEmail(anyString());
     verify(deliveryService, times(1)).confirmDelivery(any(), any());
     verify(deliveryService, times(1)).checkDeliveriesToAssign();
     verify(deliveryService, times(1)).notifyHost(any());
-
   }
-
 }

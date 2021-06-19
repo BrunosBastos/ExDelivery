@@ -1,6 +1,5 @@
 package tqs.exdelivery.service;
 
-import io.cucumber.java.nl.Stel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,12 +51,12 @@ class DeliveryServiceTest {
 
     var user2 = new User();
     user2.setEmail("tiago@gmail.com");
-    var c2 = new Courier(2L, 5, 0,0, user2);
+    var c2 = new Courier(2L, 5, 0, 0, user2);
 
     d1 = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, c1);
     d2 = new Delivery(2L, 2L, 50.23123, 50.63244, "pending", DELIVERY_HOST, null);
-    d3 = new Delivery(3L, 3L, 10,20,"assigned", DELIVERY_HOST, c2);
-    d4 = new Delivery(4L, 4L, 10,20,"assigned", DELIVERY_HOST, c1);
+    d3 = new Delivery(3L, 3L, 10, 20, "assigned", DELIVERY_HOST, c2);
+    d4 = new Delivery(4L, 4L, 10, 20, "assigned", DELIVERY_HOST, c1);
 
     delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
 
@@ -177,9 +176,8 @@ class DeliveryServiceTest {
     d3.setState("pending");
     d4.setState("pending");
 
-    when(deliveryRepository.findAllByState("pending")).thenReturn(Arrays.asList(d2,d3,d4));
+    when(deliveryRepository.findAllByState("pending")).thenReturn(Arrays.asList(d2, d3, d4));
     deliveryService.checkDeliveriesToAssign();
-    verify(deliveryRepository,times(3)).save(any());
+    verify(deliveryRepository, times(3)).save(any());
   }
-
 }

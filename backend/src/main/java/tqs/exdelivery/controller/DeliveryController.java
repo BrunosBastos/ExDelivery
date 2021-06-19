@@ -35,8 +35,13 @@ public class DeliveryController {
   }
 
   @PutMapping("/deliveries/{id}")
-  public ResponseEntity<Delivery> confirmDelivery(Authentication authentication, @Valid @PathVariable Long id) throws UserNotFoundException, ConnectException {
-    var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
+  public ResponseEntity<Delivery> confirmDelivery(
+      Authentication authentication, @Valid @PathVariable Long id)
+      throws UserNotFoundException, ConnectException {
+    var user =
+        userRepository
+            .findByEmail(authentication.getName())
+            .orElseThrow(UserNotFoundException::new);
     if (user.getCourier() == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Courier does not exist");
     }
@@ -44,8 +49,7 @@ public class DeliveryController {
     // update delivery
     var delivery = service.confirmDelivery(id, user.getCourier());
     if (delivery == null) {
-      throw new ResponseStatusException(
-              HttpStatus.BAD_REQUEST, "Can't confirm this delivery");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't confirm this delivery");
     }
 
     // check if there are free deliveries pending

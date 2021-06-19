@@ -1,12 +1,12 @@
 package tqs.exdelivery.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import tqs.exdelivery.entity.Courier;
@@ -21,8 +21,6 @@ import java.util.List;
 @Service
 public class DeliveryService {
   private static final int PAGE_SIZE = 10;
-
-  private static final Logger logger = LogManager.getLogger(DeliveryService.class);
 
   private static final String DELIVERY_ASSIGNED = "assigned";
 
@@ -87,7 +85,9 @@ public class DeliveryService {
 
   public Delivery confirmDelivery(Long deliveryId, Courier courier) {
     var deliverydb = deliveryRepository.findById(deliveryId);
-    if(deliverydb.isEmpty() || !deliverydb.get().getState().equals(DELIVERY_ASSIGNED) || deliverydb.get().getCourier().getId() != courier.getId()) {
+    if (deliverydb.isEmpty()
+        || !deliverydb.get().getState().equals(DELIVERY_ASSIGNED)
+        || deliverydb.get().getCourier().getId() != courier.getId()) {
       return null;
     }
     var delivery = deliverydb.get();
@@ -108,10 +108,11 @@ public class DeliveryService {
   }
 
   public void notifyHost(Delivery delivery) throws ConnectException {
-    var headers=new HttpHeaders();
+    var headers = new HttpHeaders();
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     HttpEntity<String> entity = new HttpEntity<>(headers);
     // doesnt work if service not up
-    // var response = restTemplate.exchange(delivery.getPurchaseHost(), HttpMethod.PUT, entity, String.class).getBody();
+    // var response = restTemplate.exchange(delivery.getPurchaseHost(), HttpMethod.PUT, entity,
+    // String.class).getBody();
   }
 }
