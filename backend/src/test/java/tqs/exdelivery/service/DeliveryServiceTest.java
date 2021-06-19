@@ -80,13 +80,13 @@ class DeliveryServiceTest {
     assertThat(delivery.getState()).isEqualTo("assigned");
     verify(courierService, VerificationModeFactory.times(1)).assignBestCourier(any());
   }
+
   @Test
   void whenAssignExistingDelivery_thenReturnNull() {
     when(deliveryRepository.existsByPurchaseHostAndPurchaseId(any(), any())).thenReturn(true);
     var delivery = deliveryService.assignDelivery(delPojo1);
     assertThat(delivery).isNull();
-    verify(deliveryRepository, VerificationModeFactory.times(1)).existsByPurchaseHostAndPurchaseId(any(), any());
+    verify(deliveryRepository, VerificationModeFactory.times(1))
+        .existsByPurchaseHostAndPurchaseId(any(), any());
   }
-
-
 }

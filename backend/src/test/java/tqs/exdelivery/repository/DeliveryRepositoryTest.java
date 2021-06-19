@@ -77,7 +77,9 @@ class DeliveryRepositoryTest {
     d1.setPurchaseId(1L);
     entityManager.persistAndFlush(d1);
 
-    boolean existsDelivery = deliveryRepository.existsByPurchaseHostAndPurchaseId(d1.getPurchaseHost(), d1.getPurchaseId());
+    boolean existsDelivery =
+        deliveryRepository.existsByPurchaseHostAndPurchaseId(
+            d1.getPurchaseHost(), d1.getPurchaseId());
 
     assertThat(existsDelivery).isTrue();
   }
@@ -89,7 +91,8 @@ class DeliveryRepositoryTest {
     d1.setPurchaseId(1L);
     entityManager.persistAndFlush(d1);
 
-    boolean existsDelivery = deliveryRepository.existsByPurchaseHostAndPurchaseId(d1.getPurchaseHost(), 2L);
+    boolean existsDelivery =
+        deliveryRepository.existsByPurchaseHostAndPurchaseId(d1.getPurchaseHost(), 2L);
 
     assertThat(existsDelivery).isFalse();
   }

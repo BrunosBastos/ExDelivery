@@ -30,7 +30,7 @@ class DeliveryControllerIT {
   @Test
   @Order(1)
   void whenCreateDeliveryAndAvailableCouriers_thenReturnAssignedDelivery() {
-    var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
+    var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 10L, 0, 0);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(delPojo1)
@@ -52,7 +52,7 @@ class DeliveryControllerIT {
         .and()
         .body("courier", is(notNullValue()));
 
-    var delPojo2 = new DeliveryPOJO(DELIVERY_HOST, 2L, 0, 0);
+    var delPojo2 = new DeliveryPOJO(DELIVERY_HOST, 11L, 0, 0);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(delPojo2)
@@ -64,7 +64,7 @@ class DeliveryControllerIT {
         .and()
         .body("state", is("assigned"));
 
-    var delPojo3 = new DeliveryPOJO(DELIVERY_HOST, 3L, 0, 0);
+    var delPojo3 = new DeliveryPOJO(DELIVERY_HOST, 12L, 0, 0);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .body(delPojo3)
@@ -80,7 +80,7 @@ class DeliveryControllerIT {
   @Test
   @Order(2)
   void whenCreateDeliveryAndNoAvailableCourier_thenReturnPendingDelivery() {
-    var delPojo4 = new DeliveryPOJO(DELIVERY_HOST, 4L, 0, 0);
+    var delPojo4 = new DeliveryPOJO(DELIVERY_HOST, 13L, 0, 0);
 
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -107,16 +107,16 @@ class DeliveryControllerIT {
   @Test
   @Order(3)
   void whenCreateAlreadyExistingDelivery_thenReturnError() {
-    var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 1L, 0, 0);
+    var delPojo1 = new DeliveryPOJO(DELIVERY_HOST, 10L, 0, 0);
 
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .body(delPojo1)
-            .post("api/v1/deliveries")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .and()
-            .statusLine("400 Already exists a delivery for that purchase.");
+        .header("Content-Type", "application/json")
+        .body(delPojo1)
+        .post("api/v1/deliveries")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Already exists a delivery for that purchase.");
   }
 }

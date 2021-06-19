@@ -24,7 +24,8 @@ public class DeliveryController {
   public ResponseEntity<Delivery> assignDelivery(@Valid @RequestBody DeliveryPOJO deliveryPOJO) {
     Delivery delivery = service.assignDelivery(deliveryPOJO);
     if (delivery == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Already exists a delivery for that purchase.");
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Already exists a delivery for that purchase.");
     }
     return ResponseEntity.ok().body(delivery);
   }
