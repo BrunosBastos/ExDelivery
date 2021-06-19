@@ -18,15 +18,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 public class DeliveryController {
 
-    @Autowired
-    private DeliveryService service;
+  @Autowired private DeliveryService service;
 
-    @PostMapping("/deliveries")
-    public ResponseEntity<Delivery> assignDelivery(@Valid @RequestBody DeliveryPOJO deliveryPOJO) {
-        Delivery delivery = service.assignDelivery(deliveryPOJO);
-        if (delivery == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not assign the Delivery");
-        }
-        return ResponseEntity.ok().body(delivery);
+  @PostMapping("/deliveries")
+  public ResponseEntity<Delivery> assignDelivery(@Valid @RequestBody DeliveryPOJO deliveryPOJO) {
+    Delivery delivery = service.assignDelivery(deliveryPOJO);
+    if (delivery == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not assign the Delivery");
     }
+    return ResponseEntity.ok().body(delivery);
+  }
 }

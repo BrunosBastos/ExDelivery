@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryPOJO {
-    private String host;
-    private Long purchaseId;
-    private double lat;
-    private double lon;
+  private String host;
+  private Long purchaseId;
+  private double lat;
+  private double lon;
 }

@@ -17,7 +17,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Courier {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -33,7 +32,15 @@ public class Courier {
   private double lon;
 
   @JsonIgnore
+  @lombok.ToString.Exclude
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   private User user;
+
+  public Courier(double reputation, double lat, double lon, User user) {
+    this.reputation = reputation;
+    this.lat = lat;
+    this.lon = lon;
+    this.user = user;
+  }
 }

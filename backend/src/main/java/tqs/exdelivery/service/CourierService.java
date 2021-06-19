@@ -1,6 +1,5 @@
 package tqs.exdelivery.service;
 
-import org.apache.commons.collections.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,70 +14,62 @@ import java.util.List;
 
 @Service
 public class CourierService {
-    private static final int EARTH_RADIUS = 6371;
+  private static final int EARTH_RADIUS = 6371;
+  private static final Logger logger = LogManager.getLogger(CourierService.class);
+  @Autowired private CourierRepository courierRepository;
+  @Autowired private DeliveryService deliveryService;
 
-    @Autowired
-    private CourierRepository courierRepository;
+  public List<Courier> getAllCouriers() {
+    return courierRepository.findAll();
+  }
 
-    @Autowired
-    private DeliveryService deliveryService;
+  private List<Courier> getAvailableCouriers() {
+    List<Delivery> assignedDeliveries = deliveryService.getAssignedDeliveries();
+    List<Long> assignedCouriers = new ArrayList<>();
 
-    private static final Logger logger = LogManager.getLogger(CourierService.class);
-
-    public List<Courier> getAllCouriers() {
-        return courierRepository.findAll();
+    for (Delivery delivery : assignedDeliveries) {
+      assignedCouriers.add(delivery.getCourier().getId());
     }
 
-    private List<Courier> getAvailableCouriers() {
-        List<Delivery> assignedDeliveries  = deliveryService.getAssignedDeliveries();
-        List<Courier> assignedCouriers = new ArrayList<>();
+    return courierRepository.findAllByIdNotIn(assignedCouriers);
+  }
 
-        System.out.println(assignedDeliveries);
+  public Courier assignBestCourier(DeliveryPOJO deliveryPOJO) {
+    var availableCouriers = getAvailableCouriers();
+    logger.info(availableCouriers);
+    Courier bestCourier = null;
+    double min = Double.MAX_VALUE;
 
-        for (Delivery delivery: assignedDeliveries) {
-            assignedCouriers.add(delivery.getCourier());
-        }
+    for (Courier courier : availableCouriers) {
+      double courierLon = Math.toRadians(courier.getLon());
+      double courierLat = Math.toRadians(courier.getLat());
 
-        System.out.println(assignedCouriers);
+      double dLon = Math.toRadians(deliveryPOJO.getLon()) - courierLon;
+      double dLat = Math.toRadians(deliveryPOJO.getLat()) - courierLat;
+      double a =
+          Math.pow(Math.sin(dLat / 2), 2)
+              + Math.cos(courierLat)
+                  * Math.cos(Math.toRadians(deliveryPOJO.getLat()))
+                  * Math.pow(Math.sin(dLon / 2), 2);
 
-        List<Courier> freeCouriers = ListUtils.subtract(courierRepository.findAll(), assignedCouriers);
+      double c = 2 * Math.asin(Math.sqrt(a));
 
-        logger.info(freeCouriers);
-        return freeCouriers;
+      double distance = c * EARTH_RADIUS;
+
+      double finalResult = distance / 30 * 0.6 + 0.4 * (1 - courier.getReputation() / 5);
+
+      var formatstr =
+          String.format(
+              "Found a new Best Courier %s with a value %s.",
+              courier.getId(), finalResult);
+
+      if (finalResult < min) {
+        logger.info(formatstr);
+        min = finalResult;
+        bestCourier = courier;
+      }
     }
 
-    public Courier assignBestCourier(DeliveryPOJO deliveryPOJO) {
-        var availableCouriers = getAvailableCouriers();
-        logger.info(availableCouriers);
-        Courier bestCourier = null;
-        double min = Double.MAX_VALUE;
-
-        for (Courier courier: availableCouriers) {
-            double courierLon = Math.toRadians(courier.getLon());
-            double courierLat = Math.toRadians(courier.getLat());
-
-            double dLon = Math.toRadians(deliveryPOJO.getLon()) - courierLon;
-            double dLat = Math.toRadians(deliveryPOJO.getLat()) - courierLat;
-            double a = Math.pow(Math.sin(dLat / 2), 2)
-                    + Math.cos(courierLat) * Math.cos(Math.toRadians(deliveryPOJO.getLat()))
-                    * Math.pow(Math.sin(dLon / 2),2);
-
-            double c = 2 * Math.asin(Math.sqrt(a));
-
-            double distance = c * EARTH_RADIUS;
-
-            double finalResult = distance/30 * 0.6 + 0.4 * (1 - courier.getReputation()/5);
-
-            var formatstr = String.format("Found a new Best Courier {%s} with a value {%s}.",
-                    courier.getUser().getName(), finalResult);
-
-            if (finalResult < min) {
-                logger.info(formatstr);
-                min = finalResult;
-                bestCourier = courier;
-            }
-        }
-
-        return bestCourier;
-    }
+    return bestCourier;
+  }
 }

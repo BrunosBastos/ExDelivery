@@ -1,41 +1,41 @@
 package tqs.exdelivery.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @Table
-@NoArgsConstructor
+@JsonSerialize
 @AllArgsConstructor
+@NoArgsConstructor
 public class Delivery {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Long purchaseId;
+  @Column private Long purchaseId;
 
-  private double lat;
+  @Column private double lat;
 
-  private double lon;
+  @Column private double lon;
 
-  @ColumnDefault("pending")
-  private String state;
+  @Column private String state = "pending";
 
-  private String host;
+  @Column private String purchaseHost;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
-  @JoinColumn(name = "courier_id", referencedColumnName = "id")
+  @ManyToOne
+  @JoinColumn(name = "deliveryCourierId", referencedColumnName = "id")
   private Courier courier;
 
-  public Delivery(String host, Long purchaseId, double lat, double lon) {
-      this.host = host;
-      this.purchaseId = purchaseId;
-      this.lat = lat;
-      this.lon = lon;
+  public Delivery(String purchaseHost, Long purchaseId, double lat, double lon) {
+    this.purchaseHost = purchaseHost;
+    this.purchaseId = purchaseId;
+    this.lat = lat;
+    this.lon = lon;
   }
 }
