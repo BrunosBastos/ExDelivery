@@ -5,7 +5,7 @@ services:
   # App backend service
   app-server_ex:
     # Configuration for building the docker image for the backend service
-    image: docker.pkg.github.com/brunosbastos/exdelivery/backend:latest  
+    image: docker.pkg.github.com/brunosbastos/exdelivery/backend_del:latest  
     ports:
       - "8080:8081"
     restart: always
@@ -20,7 +20,7 @@ services:
 
   app-client_ex:
     
-    image: docker.pkg.github.com/brunosbastos/exdelivery/frontend:latest
+    image: docker.pkg.github.com/brunosbastos/exdelivery/frontend_del:latest
     ports:
       - "3000:3001"
     restart: always
