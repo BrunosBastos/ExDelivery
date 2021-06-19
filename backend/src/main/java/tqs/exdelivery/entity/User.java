@@ -39,4 +39,12 @@ public class User {
 
   @OneToOne(mappedBy = "user")
   private Courier courier;
+
+  public User(String email, String password, String name, boolean isSuperUser, Courier courier) {
+    this.email = email;
+    this.password = password;
+    this.name = name;
+    this.isSuperUser = isSuperUser;
+    this.courier = courier;
+  }
 }
