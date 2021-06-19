@@ -1,6 +1,8 @@
 package tqs.exdelivery.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
@@ -44,8 +46,8 @@ public class DeliveryService {
     return deliveryRepository.findAllByState("assigned");
   }
 
-  public List<Delivery> getCourierDeliveries(Courier courier) {
-    return deliveryRepository.findAllByCourier(courier);
+  public Page<Delivery> getCourierDeliveries(Courier courier, Pageable pageable) {
+    return deliveryRepository.findAllByCourier(courier, pageable);
   }
 
   public List<Delivery> getAllDeliveries() {

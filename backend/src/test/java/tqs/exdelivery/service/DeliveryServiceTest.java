@@ -89,4 +89,12 @@ class DeliveryServiceTest {
     verify(deliveryRepository, VerificationModeFactory.times(1))
         .existsByPurchaseHostAndPurchaseId(any(), any());
   }
+
+  @Test
+  void whenGetAllCourierDeliveries_thenReturnDeliveries() {
+
+    when(deliveryRepository.findAllByCourier(any())).thenReturn(Arrays.asList(d1));
+
+  }
+
 }

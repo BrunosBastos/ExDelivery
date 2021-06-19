@@ -1,6 +1,10 @@
 package tqs.exdelivery.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,13 +22,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 public class DeliveryController {
 
+  private final int PAGE_SIZE = 10;
   @Autowired private DeliveryService service;
 
   @Autowired private UserRepository userRepository;
 
   @PostMapping("/deliveries")
   public ResponseEntity<Delivery> assignDelivery(@Valid @RequestBody DeliveryPOJO deliveryPOJO) {
-    Delivery delivery = service.assignDelivery(deliveryPOJO);
+    var delivery = service.assignDelivery(deliveryPOJO);
     if (delivery == null) {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Already exists a delivery for that purchase.");
@@ -33,14 +38,15 @@ public class DeliveryController {
   }
 
   @GetMapping("/deliveries/me")
-  public ResponseEntity<List<Delivery>> getMyDeliveries(Authentication authentication) throws UserNotFoundException {
+  public ResponseEntity<Page<Delivery>> getMyDeliveries(Authentication authentication, @RequestParam int page, @RequestParam boolean recent) throws UserNotFoundException {
     var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
     if(user.getCourier() == null) {
       throw new ResponseStatusException(
               HttpStatus.BAD_REQUEST, "Courier does not exist");
     }
+    Pageable paging = PageRequest.of(page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
 
-    List<Delivery> deliveries = service.getCourierDeliveries(user.getCourier());
+    var deliveries = service.getCourierDeliveries(user.getCourier(), paging);
     return ResponseEntity.ok().body(deliveries);
   }
 
@@ -49,8 +55,8 @@ public class DeliveryController {
     var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
     if (!user.isSuperUser()) {
       throw new ResponseStatusException(
-              HttpStatus.BAD_REQUEST, "User does not exist")
-  }
+              HttpStatus.BAD_REQUEST, "User does not exist");
+    }
     List<Delivery> deliveries = service.getAllDeliveries();
     return ResponseEntity.ok().body(deliveries);
   }
