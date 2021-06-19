@@ -13,6 +13,7 @@ import tqs.exdelivery.repository.UserRepository;
 import tqs.exdelivery.service.DeliveryService;
 
 import javax.validation.Valid;
+import java.net.ConnectException;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,29 @@ public class DeliveryController {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Already exists a delivery for that purchase.");
     }
+    return ResponseEntity.ok().body(delivery);
+  }
+
+  @PutMapping("/deliveries/{id}")
+  public ResponseEntity<Delivery> confirmDelivery(Authentication authentication, @Valid @PathVariable Long id) throws UserNotFoundException, ConnectException {
+    var user = userRepository.findByEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
+    if (user.getCourier() == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Courier does not exist");
+    }
+
+    // update delivery
+    var delivery = service.confirmDelivery(id, user.getCourier());
+    if (delivery == null) {
+      throw new ResponseStatusException(
+              HttpStatus.BAD_REQUEST, "Can't confirm this delivery.");
+    }
+
+    // check if there are free deliveries pending
+    service.checkDeliveriesToAssign();
+
+    // notify the host to update the delivery state
+    service.notifyHost(delivery);
+
     return ResponseEntity.ok().body(delivery);
   }
 

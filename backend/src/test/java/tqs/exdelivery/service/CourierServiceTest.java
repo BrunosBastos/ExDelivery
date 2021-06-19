@@ -63,7 +63,7 @@ class CourierServiceTest {
   @Test
   void whenNoCourierIsFree_thenReturnNull() {
     when(courierRepository.findAllByIdNotIn(anyList())).thenReturn(Arrays.asList());
-    var courier = courierService.assignBestCourier(delPojo1);
+    var courier = courierService.assignBestCourier(d2);
     assertThat(courier).isNull();
     verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotIn(anyList());
   }
@@ -71,7 +71,7 @@ class CourierServiceTest {
   @Test
   void whenCourierHasGreaterRating_thenReturnCourier() {
     when(courierRepository.findAllByIdNotIn(anyList())).thenReturn(Arrays.asList(c2, c3));
-    var courier = courierService.assignBestCourier(delPojo1);
+    var courier = courierService.assignBestCourier(d2);
     assertThat(courier.getId()).isEqualTo(c2.getId());
     verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotIn(anyList());
   }
@@ -79,7 +79,7 @@ class CourierServiceTest {
   @Test
   void whenCourierIsCloser_thenReturnCourier() {
     when(courierRepository.findAllByIdNotIn(anyList())).thenReturn(Arrays.asList(c1, c2));
-    var courier = courierService.assignBestCourier(delPojo1);
+    var courier = courierService.assignBestCourier(d2);
     assertThat(courier.getId()).isEqualTo(c1.getId());
     verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotIn(anyList());
   }
