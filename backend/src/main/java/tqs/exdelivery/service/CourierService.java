@@ -84,4 +84,17 @@ public class CourierService {
     courier.setReputation((double) total / reviews.size());
     courierRepository.save(courier);
   }
+
+  public List<Courier> getCouriers() {
+    return courierRepository.findAll();
+  }
+
+  public Courier fireCourier(Long courierId) {
+    var courier = courierRepository.findById(courierId);
+    if (courier.isEmpty()) {
+      return null;
+    }
+    courierRepository.delete(courier.get());
+    return courier.get();
+  }
 }
