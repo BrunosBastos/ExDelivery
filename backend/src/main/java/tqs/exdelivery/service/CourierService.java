@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
+import tqs.exdelivery.entity.Review;
 import tqs.exdelivery.repository.CourierRepository;
+import tqs.exdelivery.repository.ReviewRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ public class CourierService {
   private static final Logger logger = LogManager.getLogger(CourierService.class);
   @Autowired private CourierRepository courierRepository;
   @Autowired private DeliveryService deliveryService;
+  @Autowired private ReviewRepository reviewRepository;
 
   public List<Courier> getAllCouriers() {
     return courierRepository.findAll();
@@ -70,4 +73,20 @@ public class CourierService {
 
     return bestCourier;
   }
+
+  public Courier updateReputation(Courier courier) {
+
+    var reviews = reviewRepository.findAllByCourier(courier);
+
+    int total = 0;
+    for(var review: reviews) {
+      total += review.getRating();
+    }
+    courier.setReputation((double) (total / reviews.size()));
+    courierRepository.save(courier);
+    return courier;
+
+  }
+
+
 }

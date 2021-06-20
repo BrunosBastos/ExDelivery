@@ -118,8 +118,8 @@ class LoadDatabase {
       Review review1 =
           new Review(1L, 3, "Demorou um bocado mais do que esperava", courier1, delivery1);
       Review review2 = new Review(2L, 4, "Muito simpátido", courier1, delivery2);
-      Review review3 = new Review(3L, 5, "Adorei, rápido e eficaz!", courier2, delivery4);
-      Arrays.asList(review1, review2, review3).forEach(reviews::save);
+      // Review review3 = new Review(3L, 5, "Adorei, rápido e eficaz!", courier2, delivery4);
+      Arrays.asList(review1, review2).forEach(reviews::save);
     };
   }
 }
