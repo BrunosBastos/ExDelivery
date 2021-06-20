@@ -3,6 +3,9 @@ package tqs.exdelivery.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
@@ -14,6 +17,8 @@ import java.util.List;
 
 @Service
 public class CourierService {
+  private static final int PAGE_SIZE = 10;
+
   private static final int EARTH_RADIUS = 6371;
   private static final Logger logger = LogManager.getLogger(CourierService.class);
   @Autowired private CourierRepository courierRepository;
@@ -85,8 +90,9 @@ public class CourierService {
     courierRepository.save(courier);
   }
 
-  public List<Courier> getCouriers() {
-    return courierRepository.findAll();
+  public List<Courier> getCouriers(int page) {
+    Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
+    return courierRepository.findAll(pageable).getContent();
   }
 
   public Courier fireCourier(Long courierId) {

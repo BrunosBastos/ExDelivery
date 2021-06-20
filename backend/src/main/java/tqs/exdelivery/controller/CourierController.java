@@ -25,7 +25,7 @@ public class CourierController {
 
     @GetMapping("/couriers")
     public ResponseEntity<List<Courier>> getCouriers(
-            Authentication authentication) throws UserNotFoundException {
+            Authentication authentication, @RequestParam int page) throws UserNotFoundException {
         var user =
                 userRepository
                         .findByEmail(authentication.getName())
@@ -33,7 +33,7 @@ public class CourierController {
         if (!user.isSuperUser()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough permissions for this query.");
         }
-        var couriers = service.getCouriers();
+        var couriers = service.getCouriers(page);
         return ResponseEntity.ok().body(couriers);
     }
 
