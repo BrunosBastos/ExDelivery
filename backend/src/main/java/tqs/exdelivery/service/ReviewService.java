@@ -10,38 +10,37 @@ import tqs.exdelivery.repository.ReviewRepository;
 @Service
 public class ReviewService {
 
-    @Autowired
-    DeliveryRepository deliveryRepository;
+  @Autowired DeliveryRepository deliveryRepository;
 
-    @Autowired
-    ReviewRepository reviewRepository;
+  @Autowired ReviewRepository reviewRepository;
 
-    @Autowired
-    CourierService courierService;
+  @Autowired CourierService courierService;
 
-    public Review createReview(Long deliveryId, ReviewPOJO reviewPOJO) {
+  public Review createReview(Long deliveryId, ReviewPOJO reviewPOJO) {
 
-        var delivery = deliveryRepository.findById(deliveryId);
-        if(delivery.isEmpty()) {
-            return null;
-        }
-        // can only review a delivery when it has been delivered
-        if(!delivery.get().getState().equals("delivered")) {
-            return null;
-        }
-        // cannot review the same delivery twice
-        if(reviewRepository.findByDelivery(delivery.get()).isPresent()) {
-            return null;
-        }
-
-        var review = new Review(reviewPOJO.getRating(), reviewPOJO.getComment(),
-                delivery.get().getCourier(), delivery.get());
-
-        reviewRepository.save(review);
-
-        courierService.updateReputation(delivery.get().getCourier());
-        return review;
+    var delivery = deliveryRepository.findById(deliveryId);
+    if (delivery.isEmpty()) {
+      return null;
+    }
+    // can only review a delivery when it has been delivered
+    if (!delivery.get().getState().equals("delivered")) {
+      return null;
+    }
+    // cannot review the same delivery twice
+    if (reviewRepository.findByDelivery(delivery.get()).isPresent()) {
+      return null;
     }
 
+    var review =
+        new Review(
+            reviewPOJO.getRating(),
+            reviewPOJO.getComment(),
+            delivery.get().getCourier(),
+            delivery.get());
 
+    reviewRepository.save(review);
+
+    courierService.updateReputation(delivery.get().getCourier());
+    return review;
+  }
 }

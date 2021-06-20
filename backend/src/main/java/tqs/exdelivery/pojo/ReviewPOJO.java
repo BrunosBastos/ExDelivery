@@ -14,11 +14,9 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class ReviewPOJO {
 
-    @Min(value = 0, message = "Rating is a number between 0 and 5")
-    @Max(value = 5, message = "Rating is a number between 0 and 5")
-    int rating;
+  @Min(value = 0, message = "Rating is a number between 0 and 5")
+  @Max(value = 5, message = "Rating is a number between 0 and 5")
+  int rating;
 
-    @NotBlank
-    @NotEmpty
-    String comment;
+  @NotBlank @NotEmpty String comment;
 }

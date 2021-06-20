@@ -20,84 +20,81 @@ import static org.hamcrest.Matchers.is;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ReviewControllerIT {
 
-    @Autowired
-    private MockMvc mvc;
+  ReviewPOJO reviewPOJO;
+  @Autowired private MockMvc mvc;
+  @Autowired private CourierRepository courierRepository;
 
-    @Autowired
-    private CourierRepository courierRepository;
+  @BeforeEach
+  void setUp() {
+    RestAssuredMockMvc.mockMvc(mvc);
+    reviewPOJO = new ReviewPOJO(3, "test");
+  }
 
-    ReviewPOJO reviewPOJO;
+  @Test
+  @WithMockUser(value = "test")
+  @Order(1)
+  void whenCreateReviewAndNotDelivered_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(reviewPOJO)
+        .post("api/v1/deliveries/3/reviews")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Could not create review");
+  }
 
-    @BeforeEach
-    void setUp() {
-        RestAssuredMockMvc.mockMvc(mvc);
-        reviewPOJO = new ReviewPOJO(3, "test");
-    }
+  @Test
+  @WithMockUser(value = "test")
+  @Order(2)
+  void whenCreateReviewAndInvalidDelivery_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(reviewPOJO)
+        .post("api/v1/deliveries/1000/reviews")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Could not create review");
+  }
 
-    @Test
-    @WithMockUser(value = "test")
-    @Order(1)
-    void whenCreateReviewAndNotDelivered_thenReturnError() {
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(reviewPOJO)
-                .post("api/v1/deliveries/3/reviews")
-                .then()
-                .assertThat()
-                .statusCode(400).statusLine("400 Could not create review");
-    }
+  @Test
+  @WithMockUser(value = "test")
+  @Order(3)
+  void whenCreateReview_thenReturnReview() {
 
-    @Test
-    @WithMockUser(value = "test")
-    @Order(2)
-    void whenCreateReviewAndInvalidDelivery_thenReturnError() {
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(reviewPOJO)
-                .post("api/v1/deliveries/1000/reviews")
-                .then()
-                .assertThat()
-                .statusCode(400).statusLine("400 Could not create review");
-    }
+    var rating = courierRepository.findById(2L).get().getReputation();
 
-    @Test
-    @WithMockUser(value = "test")
-    @Order(3)
-    void whenCreateReview_thenReturnReview() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(reviewPOJO)
+        .post("api/v1/deliveries/4/reviews")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("rating", is(reviewPOJO.getRating()))
+        .and()
+        .body("comment", is(reviewPOJO.getComment()))
+        .and()
+        .body("delivery.id", is(4));
+    ;
 
-        var rating = courierRepository.findById(2L).get().getReputation();
+    var newRating = courierRepository.findById(2L).get().getReputation();
 
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(reviewPOJO)
-                .post("api/v1/deliveries/4/reviews")
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .body("rating", is(reviewPOJO.getRating()))
-                .and()
-                .body("comment", is(reviewPOJO.getComment()))
-                .and()
-                .body("delivery.id", is(4));;
+    assertThat(newRating).isNotEqualTo(rating);
+  }
 
-        var newRating = courierRepository.findById(2L).get().getReputation();
-
-        assertThat(newRating).isNotEqualTo(rating);
-    }
-
-
-    @Test
-    @WithMockUser(value = "test")
-    @Order(4)
-    void whenCreateReviewAndAlreadyReviewed_thenReturnError() {
-        RestAssuredMockMvc.given()
-                .header("Content-Type", "application/json")
-                .body(reviewPOJO)
-                .post("api/v1/deliveries/4/reviews")
-                .then()
-                .assertThat()
-                .statusCode(400).statusLine("400 Could not create review");
-    }
-
-
+  @Test
+  @WithMockUser(value = "test")
+  @Order(4)
+  void whenCreateReviewAndAlreadyReviewed_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .body(reviewPOJO)
+        .post("api/v1/deliveries/4/reviews")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Could not create review");
+  }
 }

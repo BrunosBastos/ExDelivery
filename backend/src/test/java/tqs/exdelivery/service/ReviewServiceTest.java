@@ -15,79 +15,69 @@ import tqs.exdelivery.repository.ReviewRepository;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
 
-    @Mock(lenient = true)
-    private DeliveryRepository deliveryRepository;
+  private static final String DELIVERY_HOST = "http://localhost:8081/api/v1/";
+  ReviewPOJO reviewPOJO;
+  Delivery delivery;
+  Delivery invalidDelivery;
+  Review existingReview;
+  @Mock(lenient = true)
+  private DeliveryRepository deliveryRepository;
+  @Mock(lenient = true)
+  private CourierService courierService;
+  @Mock(lenient = true)
+  private ReviewRepository reviewRepository;
+  @InjectMocks private ReviewService reviewService;
 
-    @Mock(lenient = true)
-    private CourierService courierService;
+  @BeforeEach
+  void setUp() {
 
-    @Mock(lenient = true)
-    private ReviewRepository reviewRepository;
+    var courier = new Courier(1L, 3.5, 0.0, 0.0, null);
 
-    @InjectMocks
-    private ReviewService reviewService;
+    reviewPOJO = new ReviewPOJO(5, "test");
+    delivery = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, courier);
+    invalidDelivery = new Delivery(2L, 2L, 40.23123, 50.63244, "pending", DELIVERY_HOST, courier);
 
-    ReviewPOJO reviewPOJO;
-    Delivery delivery;
-    Delivery invalidDelivery;
-    Review existingReview;
+    existingReview = new Review(1L, 3, "Demorou um bocado mais do que esperava", courier, delivery);
+  }
 
-    private static final String DELIVERY_HOST = "http://localhost:8081/api/v1/";
+  @Test
+  void whenCreateReviewWithInvalidDeliveryId_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.empty());
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.createReview(1L, reviewPOJO);
+    assertThat(review).isNull();
+  }
 
-    @BeforeEach
-    void setUp() {
+  @Test
+  void whenCreateReviewThatIsNotDelivered_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(invalidDelivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.createReview(1L, reviewPOJO);
+    assertThat(review).isNull();
+  }
 
-        var courier = new Courier(1L, 3.5, 0.0, 0.0, null);
+  @Test
+  void whenCreateReviewThatIsAlreadyReviewed_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(invalidDelivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.of(existingReview));
+    var review = reviewService.createReview(1L, reviewPOJO);
+    assertThat(review).isNull();
+  }
 
-        reviewPOJO = new ReviewPOJO(5, "test");
-        delivery = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered",
-                        DELIVERY_HOST, courier);
-        invalidDelivery = new Delivery(2L, 2L, 40.23123, 50.63244, "pending",
-                DELIVERY_HOST, courier);
-
-        existingReview = new Review(1L, 3, "Demorou um bocado mais do que esperava",
-                courier, delivery);
-    }
-
-    @Test
-    void whenCreateReviewWithInvalidDeliveryId_thenReturnNull() {
-        when(deliveryRepository.findById(anyLong())).thenReturn(Optional.empty());
-        when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
-        var review = reviewService.createReview(1L, reviewPOJO);
-        assertThat(review).isNull();
-    }
-
-    @Test
-    void whenCreateReviewThatIsNotDelivered_thenReturnNull() {
-        when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(invalidDelivery));
-        when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
-        var review = reviewService.createReview(1L, reviewPOJO);
-        assertThat(review).isNull();
-    }
-
-    @Test
-    void whenCreateReviewThatIsAlreadyReviewed_thenReturnNull() {
-        when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(invalidDelivery));
-        when(reviewRepository.findByDelivery(any())).thenReturn(Optional.of(existingReview));
-        var review = reviewService.createReview(1L, reviewPOJO);
-        assertThat(review).isNull();
-    }
-
-    @Test
-    void whenCreateValidReview_thenReturnReview() {
-        when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
-        when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
-        var review = reviewService.createReview(1L, reviewPOJO);
-        assertThat(review.getRating()).isEqualTo(reviewPOJO.getRating());
-        assertThat(review.getComment()).isEqualTo(reviewPOJO.getComment());
-        assertThat(review.getCourier().getId()).isEqualTo(delivery.getCourier().getId());
-        assertThat(review.getDelivery().getId()).isEqualTo(delivery.getId());
-    }
+  @Test
+  void whenCreateValidReview_thenReturnReview() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.createReview(1L, reviewPOJO);
+    assertThat(review.getRating()).isEqualTo(reviewPOJO.getRating());
+    assertThat(review.getComment()).isEqualTo(reviewPOJO.getComment());
+    assertThat(review.getCourier().getId()).isEqualTo(delivery.getCourier().getId());
+    assertThat(review.getDelivery().getId()).isEqualTo(delivery.getId());
+  }
 }

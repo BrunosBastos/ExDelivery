@@ -15,19 +15,17 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 public class ReviewController {
 
-    @Autowired
-    ReviewService reviewService;
+  @Autowired ReviewService reviewService;
 
-    @PostMapping("/deliveries/{id}/reviews")
-    public ResponseEntity<Review> reviewDelivery(@PathVariable Long id, @Valid @RequestBody ReviewPOJO reviewPOJO) {
+  @PostMapping("/deliveries/{id}/reviews")
+  public ResponseEntity<Review> reviewDelivery(
+      @PathVariable Long id, @Valid @RequestBody ReviewPOJO reviewPOJO) {
 
-        var review =  reviewService.createReview(id, reviewPOJO);
-        if(review == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not create review");
-        }
-
-        return ResponseEntity.ok().body(review);
+    var review = reviewService.createReview(id, reviewPOJO);
+    if (review == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not create review");
     }
 
-
+    return ResponseEntity.ok().body(review);
+  }
 }

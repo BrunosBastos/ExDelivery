@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
-import tqs.exdelivery.entity.Review;
 import tqs.exdelivery.repository.CourierRepository;
 import tqs.exdelivery.repository.ReviewRepository;
 
@@ -74,19 +73,15 @@ public class CourierService {
     return bestCourier;
   }
 
-  public Courier updateReputation(Courier courier) {
+  public void updateReputation(Courier courier) {
 
     var reviews = reviewRepository.findAllByCourier(courier);
 
-    int total = 0;
-    for(var review: reviews) {
+    var total = 0;
+    for (var review : reviews) {
       total += review.getRating();
     }
-    courier.setReputation((double) (total / reviews.size()));
+    courier.setReputation((double) total / reviews.size());
     courierRepository.save(courier);
-    return courier;
-
   }
-
-
 }

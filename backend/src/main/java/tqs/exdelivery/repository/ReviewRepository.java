@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    Optional<Review> findByDelivery(Delivery delivery);
-    List<Review> findAllByCourier(Courier courier);
+  Optional<Review> findByDelivery(Delivery delivery);
+  
+  List<Review> findAllByCourier(Courier courier);
 }
