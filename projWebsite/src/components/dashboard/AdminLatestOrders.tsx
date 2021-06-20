@@ -43,11 +43,11 @@ const notifyError = (msg) => {
     });
 }
 
-interface LatestOrdersProps {
+interface AdminLatestOrdersProps {
   recent: string;
 }
 
-const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
+const AdminLatestOrders: React.FC<AdminLatestOrdersProps> = ({recent}) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [orders, setOrders] = useState([]);
@@ -159,4 +159,4 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
   )
 }
 
-export default LatestOrders;
+export default AdminLatestOrders;

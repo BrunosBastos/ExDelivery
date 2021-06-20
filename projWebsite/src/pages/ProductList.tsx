@@ -17,10 +17,13 @@ const ProductList = () => {
   useEffect( () => {
     ProductService.getAllProducts()
       .then( (res) => {
-        return res.json()
+        if (res.status == 200)
+          return res.json()
+        return null
       })
       .then( (res) => {
-        setProductsList(res)
+        if (res)
+          setProductsList(res)
       })
       .catch( () => {
         console.log("Something went wrong")

@@ -54,10 +54,6 @@ const notifyError = (msg) => {
     });
 }
 
-
-
-
-
 const AddProduct = () => {
   const [supplierslist, setSuppliersList] = useState([]); 
   const [suplier, setSupplier] = useState(1);

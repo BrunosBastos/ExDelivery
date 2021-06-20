@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet';
 import { v4 as uuid } from 'uuid';
+import { useState } from 'react';
 import { 
   Box,
   Container, 
@@ -12,81 +13,31 @@ import {
 import { Search as SearchIcon } from 'react-feather';
 //@ts-ignore
 import LatestOrders from 'src/components/dashboard//LatestOrders.tsx';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 
 
-const orders = [
-  {
-    id: uuid(),
-    ref: 'CDD1049',
-    amount: 30.5,
-    product: {
-      name: 'Ekaterina Tankova'
-    },
-    delLocation: 'Oliveira de Azeméis',
-    createdAt: 1595016400000,
-    status: 'pending'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1048',
-    amount: 25.1,
-    product: {
-      name: 'Cao Yu'
-    },
-    delLocation: 'Oliveira de Azeméis',
-    createdAt: 1555016400000,
-    status: 'delivered'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1047',
-    amount: 10.99,
-    product: {
-      name: 'Alexa Richardson'
-    },
-    delLocation: 'São João da Madeira',
-    createdAt: 1554930000000,
-    status: 'refunded'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1046',
-    amount: 96.43,
-    product: {
-      name: 'Anje Keizer'
-    },
-    delLocation: 'São João da Madeira',
-    createdAt: 1554757200000,
-    status: 'pending'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1045',
-    amount: 32.54,
-    product: {
-      name: 'Clarke Gillebert'
-    },
-    delLocation: 'Mangualde',
-    createdAt: 1554670800000,
-    status: 'delivered'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1044',
-    amount: 16.76,
-    product: {
-      name: 'Adam Denisov'
-    },
-    delLocation: 'Casa do Leandro',
-    createdAt: 1554172800000,
-    status: 'delivered'
-  }
-];
+const OrderList = () => {
+  const [recent, setRecent] = useState("asc");
+  const [open, setOpen] = useState(false);
 
-const CourierList = () => (
+  const handleChange = (event) => {
+    setRecent(event.target.value)
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  return (
   <>
     <Helmet>
-      <title>My Orders History</title>
+      <title>My Orders</title>
     </Helmet>
     <Box
       sx={{
@@ -99,32 +50,29 @@ const CourierList = () => (
         <Card>
           <CardContent>
             <Box sx={{ maxWidth: 500 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon
-                        fontSize="small"
-                        color="action"
-                      >
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  )
-                }}
-                placeholder="Search Order"
-                variant="outlined"
-              />
+            <InputLabel id="demo-controlled-open-select-label">Order Deliveries</InputLabel>
+            <Select
+              labelId="demo-controlled-open-select-label"
+              id="demo-controlled-open-select"
+              open={open}
+              onClose={handleClose}
+              onOpen={handleOpen}
+              value={recent}
+              onChange={handleChange}
+            >
+              <MenuItem value={"asc"}>Ascending</MenuItem>
+              <MenuItem value={"desc"}>Descending</MenuItem>
+            </Select>
             </Box>
           </CardContent>
         </Card>
         <Box sx={{ pt: 3 }}>
-          <LatestOrders orders={orders}/>
+          <LatestOrders recent={recent}/>
         </Box>
       </Container>
     </Box>
   </>
-);
+  );
+}
 
-export default CourierList;
+export default OrderList;

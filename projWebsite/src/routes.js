@@ -4,6 +4,7 @@ import MainLayout from 'src/components/MainLayout';
 import Account from 'src/pages/Account';
 import CourierList from 'src/pages/CourierList';
 import OrderList from 'src/pages/OrderList.tsx';
+import AdminOrderList from 'src/pages/AdminOrderList.tsx';
 import Dashboard from 'src/pages/Dashboard';
 import Login from 'src/pages/Login.tsx';
 import NotFound from 'src/pages/NotFound';
@@ -23,6 +24,7 @@ const routes = [
       { path: 'account', element: <Account /> },
       { path: 'couriers', element: <CourierList /> },
       { path: 'orders', element: <OrderList /> },
+      { path: 'adminOrders', element: <AdminOrderList /> },
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
       { path: 'settings', element: <Settings /> },
