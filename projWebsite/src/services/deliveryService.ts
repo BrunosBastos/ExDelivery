@@ -29,6 +29,29 @@ class DeliveryService {
         })
     }
 
+    getDelivery(id) {
+        return fetch(EXDELIVERY_API_BASE_URL + 'deliveries/'+id, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
+            }
+        })
+    }
+
+    confirmDelivery(id) {
+        return fetch(EXDELIVERY_API_BASE_URL + 'deliveries/'+id, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
+            }
+        })
+    }
 
     getProduct(id: any){
         return fetch(EXDELIVERY_API_BASE_URL + 'products/' + id, {

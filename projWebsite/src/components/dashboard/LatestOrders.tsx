@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 import DeliveryService from "src/services/deliveryService";
 import { toast } from 'react-toastify';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 
 
@@ -51,6 +52,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     DeliveryService.getMyDeliveries(page, recent == 'desc')
@@ -111,6 +113,9 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
                 <TableRow
                   hover
                   key={order.id+recent}
+                  style={{cursor:'pointer'}}
+                  onClick={() => navigate('/app/delivery/'+order.id, { replace: true })}
+                
                 >
                   <TableCell>
                     {order.id}

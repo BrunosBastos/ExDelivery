@@ -15,6 +15,7 @@ import AddProduct from './pages/AddProduct.tsx';
 import AddSupplier from './pages/AddSupplier.tsx';
 import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
+import DeliveryDetails from './pages/DeliveryDetails.tsx'
 
 const routes = [
   {
@@ -25,6 +26,7 @@ const routes = [
       { path: 'couriers', element: <CourierList /> },
       { path: 'orders', element: <OrderList /> },
       { path: 'adminOrders', element: <AdminOrderList /> },
+      { path: 'delivery/:id', element: <DeliveryDetails />},
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
       { path: 'settings', element: <Settings /> },

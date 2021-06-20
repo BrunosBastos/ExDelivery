@@ -17,6 +17,7 @@ import tqs.exdelivery.repository.DeliveryRepository;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DeliveryService {
@@ -70,6 +71,16 @@ public class DeliveryService {
             page, PAGE_SIZE, recent ? Sort.by("id").descending() : Sort.by("id").ascending());
 
     return deliveryRepository.findAllByCourier(courier, pageable).getContent();
+  }
+
+  public Delivery getDelivery(Long deliveryId, Courier courier) {
+    Optional<Delivery> delivery = deliveryRepository.findById(deliveryId);
+    // delivery not found or
+    // courier making the request isn't assigned to this delivery
+    if (delivery.isEmpty() || courier != null && delivery.get().getCourier().getId() != courier.getId()) {
+      return null;
+    }
+    return delivery.get();
   }
 
   public List<Delivery> getDeliveries(String email, int page, boolean recent) {

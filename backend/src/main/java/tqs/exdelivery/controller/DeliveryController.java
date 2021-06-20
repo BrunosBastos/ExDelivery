@@ -34,6 +34,20 @@ public class DeliveryController {
     return ResponseEntity.ok().body(delivery);
   }
 
+  @GetMapping("/deliveries/{id}")
+  public ResponseEntity<Delivery> getDelivery(
+      Authentication authentication, @Valid @PathVariable Long id) throws UserNotFoundException {
+    var user =
+        userRepository
+            .findByEmail(authentication.getName())
+            .orElseThrow(UserNotFoundException::new);
+    var delivery = service.getDelivery(id, user.getCourier());
+    if (delivery == null) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find this delivery");
+    }
+    return ResponseEntity.ok().body(delivery);
+  }
+
   @PutMapping("/deliveries/{id}")
   public ResponseEntity<Delivery> confirmDelivery(
       Authentication authentication, @Valid @PathVariable Long id)
