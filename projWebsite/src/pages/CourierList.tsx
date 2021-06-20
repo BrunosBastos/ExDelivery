@@ -1,9 +1,9 @@
 import { Helmet } from 'react-helmet';
 import { Box, Container } from '@material-ui/core';
 import CourierListResults from 'src/components/courier/CourierListResults';
-import couriers from 'src/__mocks__/customers';
 
-const CourierList = () => (
+const CourierList = () => {
+  return (
   <>
     <Helmet>
       <title>Couriers</title>
@@ -17,11 +17,12 @@ const CourierList = () => (
     >
       <Container maxWidth={false}>
         <Box sx={{ pt: 3 }}>
-          <CourierListResults couriers={couriers} />
+          <CourierListResults />
         </Box>
       </Container>
     </Box>
   </>
-);
+  );
+}
 
 export default CourierList;
