@@ -26,12 +26,16 @@ class ReviewServiceTest {
   Delivery delivery;
   Delivery invalidDelivery;
   Review existingReview;
+
   @Mock(lenient = true)
   private DeliveryRepository deliveryRepository;
+
   @Mock(lenient = true)
   private CourierService courierService;
+
   @Mock(lenient = true)
   private ReviewRepository reviewRepository;
+
   @InjectMocks private ReviewService reviewService;
 
   @BeforeEach

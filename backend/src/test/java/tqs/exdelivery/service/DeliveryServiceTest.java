@@ -180,4 +180,17 @@ class DeliveryServiceTest {
     deliveryService.checkDeliveriesToAssign();
     verify(deliveryRepository, times(3)).save(any());
   }
+
+  @Test
+  void whenReassignCourier_thenVerifyMethodCall() {
+    d3.setCourier(null);
+    d4.setCourier(null);
+    d3.setState("pending");
+    d4.setState("pending");
+    when(deliveryRepository.findAllByStateAndCourier(any(), any(Courier.class)))
+        .thenReturn(Arrays.asList(d3, d4));
+    deliveryService.reAssignCourierAssignedDeliveries(c1);
+    verify(deliveryRepository, times(2)).save(any());
+    verify(courierService, times(2)).assignBestCourier(any());
+  }
 }
