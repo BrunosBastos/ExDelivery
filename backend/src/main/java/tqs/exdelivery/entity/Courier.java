@@ -30,11 +30,12 @@ public class Courier {
   @Column(nullable = false)
   private double lon;
 
+
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   private User user;
 
-  @Column
+  @Column(nullable = false)
   @ColumnDefault("true")
   private boolean active;
 
@@ -43,5 +44,7 @@ public class Courier {
     this.lat = lat;
     this.lon = lon;
     this.user = user;
+    this.active = true;
   }
+
 }
