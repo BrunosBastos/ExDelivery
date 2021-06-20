@@ -21,7 +21,8 @@ import static org.hamcrest.Matchers.is;
 @AutoConfigureTestDatabase
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class CourierControllerIT {
 
   @Autowired private MockMvc mvc;
