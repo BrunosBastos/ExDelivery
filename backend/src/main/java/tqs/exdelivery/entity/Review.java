@@ -29,4 +29,11 @@ public class Review {
   @ManyToOne
   @JoinColumn(name = "reviewDeliveryId", referencedColumnName = "id")
   private Delivery delivery;
+
+  public Review(int rating, String comment, Courier courier, Delivery delivery) {
+    this.rating = rating;
+    this.comment = comment;
+    this.courier = courier;
+    this.delivery = delivery;
+  }
 }
