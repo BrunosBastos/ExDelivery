@@ -31,8 +31,6 @@ public class Courier {
   @Column(nullable = false)
   private double lon;
 
-  @JsonIgnore
-  @lombok.ToString.Exclude
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   private User user;

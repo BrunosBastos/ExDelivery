@@ -22,7 +22,9 @@ import Select from '@material-ui/core/Select';
 
 const AdminOrderList = () => {
   const [recent, setRecent] = useState("asc");
+  const [recentOr, setRecentOr] = useState("asc");
   const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
 
   const handleChange = (event) => {
     setRecent(event.target.value)
@@ -35,6 +37,12 @@ const AdminOrderList = () => {
   const handleOpen = () => {
     setOpen(true);
   };
+
+  const updateValues = () => {
+    //@ts-ignore
+    setEmail(document.getElementById("courierEmail").value);
+    setRecentOr(recent); 
+  }
 
   return (
   <>
@@ -110,7 +118,7 @@ const AdminOrderList = () => {
                             color="primary"
                             variant="contained"
                             size="large"
-                            onClick= {() => console.log("po crl")}
+                            onClick= {() => updateValues()}
                         >
                             Search
                         </Button>
@@ -119,7 +127,7 @@ const AdminOrderList = () => {
           </CardContent>
         </Card>
         <Box sx={{ pt: 3 }}>
-          <AdminLatestOrders recent={recent}/>
+          <AdminLatestOrders recent={recentOr} email={email}/>
         </Box>
       </Container>
     </Box>

@@ -37,6 +37,8 @@ public class User {
   @Column(nullable = false)
   private boolean isSuperUser;
 
+  @JsonIgnore
+  @lombok.ToString.Exclude
   @OneToOne(mappedBy = "user")
   private Courier courier;
 
