@@ -34,6 +34,10 @@ public class Courier {
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   private User user;
 
+  @Column
+  @ColumnDefault("true")
+  private boolean active;
+
   public Courier(double reputation, double lat, double lon, User user) {
     this.reputation = reputation;
     this.lat = lat;

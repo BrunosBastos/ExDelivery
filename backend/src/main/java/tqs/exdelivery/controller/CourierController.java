@@ -37,7 +37,7 @@ public class CourierController {
         return ResponseEntity.ok().body(couriers);
     }
 
-    @DeleteMapping("/couriers/{id}")
+    @PutMapping("/couriers/{id}")
     public ResponseEntity<Courier> fireCourier(
             Authentication authentication, @Valid @PathVariable Long id) throws UserNotFoundException {
         var user =

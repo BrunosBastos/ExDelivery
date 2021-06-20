@@ -126,4 +126,22 @@ public class DeliveryService {
     // var response = restTemplate.exchange(delivery.getPurchaseHost(), HttpMethod.PUT, entity,
     // String.class).getBody();
   }
+
+  public List<Delivery> getCourierAssignedDeliveries(Courier courier) {
+    return deliveryRepository.findAllByStateAndCourier(DELIVERY_ASSIGNED, courier);
+  }
+
+  public void reAssignCourierAssignedDeliveries(Courier courier) {
+    for (Delivery delivery : getCourierAssignedDeliveries(courier)) {
+      var bestCourier = courierService.assignBestCourier(delivery);
+      if (bestCourier != null) {
+        delivery.setCourier(bestCourier);
+        delivery.setState(DELIVERY_ASSIGNED);
+      } else {
+        delivery.setCourier(null);
+        delivery.setState(DELIVERY_PENDING);
+      }
+      deliveryRepository.save(delivery);
+    }
+  }
 }

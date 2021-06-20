@@ -37,7 +37,7 @@ class ReviewServiceTest {
   @BeforeEach
   void setUp() {
 
-    var courier = new Courier(1L, 3.5, 0.0, 0.0, null);
+    var courier = new Courier(1L, 3.5, 0.0, 0.0, null, true);
 
     reviewPOJO = new ReviewPOJO(5, "test");
     delivery = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, courier);

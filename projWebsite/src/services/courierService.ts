@@ -18,7 +18,7 @@ class CourierService {
 
     fireCourier(id){
         return fetch(EXDELIVERY_API_BASE_URL + 'couriers/'+id, {
-            method: 'DELETE',
+            method: 'PUT',
             mode: 'cors',
             headers: {
                 'accept': 'application/json',

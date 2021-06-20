@@ -40,9 +40,9 @@ class CourierServiceTest {
 
   @BeforeEach
   void setUp() {
-    c1 = new Courier(1L, 5, 0.0, 0.0, null);
-    c2 = new Courier(2L, 5, 10, 20, null);
-    c3 = new Courier(3L, 3, 10, 20, null);
+    c1 = new Courier(1L, 5, 0.0, 0.0, null, true);
+    c2 = new Courier(2L, 5, 10, 20, null, true);
+    c3 = new Courier(3L, 3, 10, 20, null, true);
 
     d1 = new Delivery(1L, 1L, 0, 0, "delivered", DELIVERY_HOST, c1);
     d2 = new Delivery(2L, 2L, 0, 0, "pending", DELIVERY_HOST, null);
@@ -62,25 +62,25 @@ class CourierServiceTest {
 
   @Test
   void whenNoCourierIsFree_thenReturnNull() {
-    when(courierRepository.findAllByIdNotIn(anyList())).thenReturn(Arrays.asList());
+    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList())).thenReturn(Arrays.asList());
     var courier = courierService.assignBestCourier(d2);
     assertThat(courier).isNull();
-    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotIn(anyList());
+    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotInAndActiveIsTrue(anyList());
   }
 
   @Test
   void whenCourierHasGreaterRating_thenReturnCourier() {
-    when(courierRepository.findAllByIdNotIn(anyList())).thenReturn(Arrays.asList(c2, c3));
+    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList())).thenReturn(Arrays.asList(c2, c3));
     var courier = courierService.assignBestCourier(d2);
     assertThat(courier.getId()).isEqualTo(c2.getId());
-    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotIn(anyList());
+    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotInAndActiveIsTrue(anyList());
   }
 
   @Test
   void whenCourierIsCloser_thenReturnCourier() {
-    when(courierRepository.findAllByIdNotIn(anyList())).thenReturn(Arrays.asList(c1, c2));
+    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList())).thenReturn(Arrays.asList(c1, c2));
     var courier = courierService.assignBestCourier(d2);
     assertThat(courier.getId()).isEqualTo(c1.getId());
-    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotIn(anyList());
+    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotInAndActiveIsTrue(anyList());
   }
 }

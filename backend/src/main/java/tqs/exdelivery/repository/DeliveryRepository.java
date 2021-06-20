@@ -13,6 +13,8 @@ import java.util.List;
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
   List<Delivery> findAllByState(String state);
 
+  List<Delivery> findAllByStateAndCourier(String state, Courier courier);
+
   Page<Delivery> findAllByCourierUserEmail(String courierEmail, Pageable pageable);
 
   Page<Delivery> findAll(Pageable pageable);
