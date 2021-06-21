@@ -32,8 +32,9 @@ class DeliveryControllerTest {
   private static final String HOST_URL = "http://localhost:8080/medex";
   Delivery del1;
   DeliveryPOJO delPojo1;
-  User validCourier;
+  User validUser;
   User admin;
+  Courier courier;
   @Autowired private MockMvc mvc;
   @MockBean private DeliveryService deliveryService;
   @MockBean private UserRepository userRepository;
@@ -41,14 +42,15 @@ class DeliveryControllerTest {
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
-    Courier courier = new Courier();
+    courier = new Courier();
     courier.setId(1L);
     del1 = new Delivery(HOST_URL, 1L, 40.5050, 50.0321);
     del1.setCourier(courier);
+    del1.setId(1L);
     delPojo1 = new DeliveryPOJO(HOST_URL, 1L, 40.5050, 50.0321);
 
-    validCourier = new User();
-    validCourier.setCourier(courier);
+    validUser = new User();
+    validUser.setCourier(courier);
 
     admin = new User();
     admin.setSuperUser(true);
@@ -83,9 +85,9 @@ class DeliveryControllerTest {
   @WithMockUser(value = "test")
   void whenIAmCourierAndIGetMyDeliveries_thenReturnMyDelivery() {
     Page<Delivery> page = new PageImpl<>(Arrays.asList(del1));
-    when(deliveryService.getCourierDeliveries(validCourier.getCourier(), 0, true))
+    when(deliveryService.getCourierDeliveries(validUser.getCourier(), 0, true))
         .thenReturn(page.getContent());
-    when(userRepository.findByEmail(any())).thenReturn(Optional.of(validCourier));
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(validUser));
 
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -97,9 +99,9 @@ class DeliveryControllerTest {
         .and()
         .body("$.size()", is(1))
         .and()
-        .body("[0].courier.id", is((int) validCourier.getCourier().getId()));
+        .body("[0].courier.id", is((int) validUser.getCourier().getId()));
 
-    verify(deliveryService, times(1)).getCourierDeliveries(validCourier.getCourier(), 0, true);
+    verify(deliveryService, times(1)).getCourierDeliveries(validUser.getCourier(), 0, true);
   }
 
   @Test
@@ -157,7 +159,7 @@ class DeliveryControllerTest {
   @Test
   @WithMockUser(value = "test")
   void whenIAmNotAdminAndIGetAllDeliveries_thenReturnError() {
-    when(userRepository.findByEmail(any())).thenReturn(Optional.of(validCourier));
+    when(userRepository.findByEmail(any())).thenReturn(Optional.of(validUser));
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
         .get("api/v1/deliveries?page=0&recent=true")
@@ -185,7 +187,7 @@ class DeliveryControllerTest {
   @Test
   @WithMockUser(value = "test")
   void whenICannotConfirmDelivery_thenReturnError() {
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validCourier));
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
     when(deliveryService.confirmDelivery(any(), any())).thenReturn(null);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -201,7 +203,7 @@ class DeliveryControllerTest {
   @WithMockUser(value = "test")
   void whenIConfirmDelivery_thenReturnDelivery() throws ConnectException {
     del1.setState("delivered");
-    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validCourier));
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
     when(deliveryService.confirmDelivery(any(), any())).thenReturn(del1);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
@@ -211,12 +213,82 @@ class DeliveryControllerTest {
         .statusCode(200)
         .body("state", is("delivered"))
         .and()
-        .body("id", is(del1.getId()))
+        .body("id", is(del1.getId().intValue()))
         .and()
-        .body("courier.id", is((int) validCourier.getCourier().getId()));
+        .body("courier.id", is((int) validUser.getCourier().getId()));
     verify(userRepository, times(1)).findByEmail(anyString());
     verify(deliveryService, times(1)).confirmDelivery(any(), any());
     verify(deliveryService, times(1)).checkDeliveriesToAssign();
     verify(deliveryService, times(1)).notifyHost(any());
   }
+
+  @Test
+  @WithMockUser(value = "test")
+  void whenGetInvalidDelivery_thenReturnError() {
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
+    when(deliveryService.getDelivery(any(), any())).thenReturn(null);
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries/1")
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .statusLine("400 Can't find this delivery");
+    verify(userRepository, times(1)).findByEmail(anyString());
+    verify(deliveryService, times(1)).getDelivery(any(), any());
+  }
+
+  @Test
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenGetDeliveryAndValidCourier_thenReturnValidResponse() {
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
+    when(deliveryService.getDelivery(any(), any())).thenReturn(del1);
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries/1")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .body("id", is(del1.getId().intValue()))
+            .and()
+            .body("courier.id", is((int) del1.getCourier().getId()));
+    verify(userRepository, times(1)).findByEmail(anyString());
+  }
+
+  @Test
+  @WithMockUser(value = "leandro@gmail.com")
+  void whenGetDeliveryWithAdmin_thenReturnDelivery() {
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(admin));
+    when(deliveryService.getDelivery(any(), any())).thenReturn(del1);
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries/1")
+            .then()
+            .assertThat()
+            .statusCode(200)
+            .body("id", is(del1.getId().intValue()));
+    verify(userRepository, times(1)).findByEmail(anyString());
+    verify(deliveryService, times(1)).getDelivery(any(), any());
+
+  }
+
+
+  @Test
+  @WithMockUser(value = "leandro@gmail.com")
+  void whenGetDeliveryAndInvalidCourier_thenReturnError() {
+    courier.setId(99L);
+    validUser.setCourier(courier);
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
+    when(deliveryService.getDelivery(any(), any())).thenReturn(null);
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries/1")
+            .then()
+            .assertThat()
+            .statusCode(400)
+            .statusLine("400 Can't find this delivery");
+    verify(userRepository, times(1)).findByEmail(anyString());
+    verify(deliveryService, times(1)).getDelivery(any(), any());
+  }
+
 }
