@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.pojo.DeliveryPOJO;
@@ -19,6 +20,7 @@ import static org.hamcrest.Matchers.*;
 @AutoConfigureTestDatabase
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class DeliveryControllerIT {
 
   private final String DELIVERY_HOST = "http:localhost:8080/";
@@ -278,5 +280,50 @@ class DeliveryControllerIT {
         .statusCode(400)
         .and()
         .statusLine("400 Can't confirm this delivery");
+  }
+
+  @Test
+  @Order(13)
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenGetDeliveryAndValidCourier_thenReturnValidResponse() {
+    RestAssuredMockMvc.given()
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .body("id", is(1))
+        .body("courier.id", is(1));
+  }
+
+  @Test
+  @Order(14)
+  @WithMockUser(value = "joaquim@gmail.com")
+  void whenGetDeliveryWithInvalidCourier_thenReturnError() {
+
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Can't find this delivery");
+  }
+
+  @Test
+  @Order(15)
+  @WithMockUser(value = "leandro@gmail.com")
+  void whenGetDeliveryWithSuperUser_thenReturnValidResponse() {
+
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .body("id", is(1))
+        .body("courier.id", is(1));
   }
 }

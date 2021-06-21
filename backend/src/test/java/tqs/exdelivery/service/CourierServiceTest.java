@@ -13,8 +13,10 @@ import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.CourierRepository;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,22 +67,45 @@ class CourierServiceTest {
     when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList())).thenReturn(Arrays.asList());
     var courier = courierService.assignBestCourier(d2);
     assertThat(courier).isNull();
-    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotInAndActiveIsTrue(anyList());
+    verify(courierRepository, VerificationModeFactory.times(1))
+        .findAllByIdNotInAndActiveIsTrue(anyList());
   }
 
   @Test
   void whenCourierHasGreaterRating_thenReturnCourier() {
-    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList())).thenReturn(Arrays.asList(c2, c3));
+    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList()))
+        .thenReturn(Arrays.asList(c2, c3));
     var courier = courierService.assignBestCourier(d2);
     assertThat(courier.getId()).isEqualTo(c2.getId());
-    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotInAndActiveIsTrue(anyList());
+    verify(courierRepository, VerificationModeFactory.times(1))
+        .findAllByIdNotInAndActiveIsTrue(anyList());
   }
 
   @Test
   void whenCourierIsCloser_thenReturnCourier() {
-    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList())).thenReturn(Arrays.asList(c1, c2));
+    when(courierRepository.findAllByIdNotInAndActiveIsTrue(anyList()))
+        .thenReturn(Arrays.asList(c1, c2));
     var courier = courierService.assignBestCourier(d2);
     assertThat(courier.getId()).isEqualTo(c1.getId());
-    verify(courierRepository, VerificationModeFactory.times(1)).findAllByIdNotInAndActiveIsTrue(anyList());
+    verify(courierRepository, VerificationModeFactory.times(1))
+        .findAllByIdNotInAndActiveIsTrue(anyList());
+  }
+
+  @Test
+  void whenFireCourierInvalidId_thenReturnNull() {
+    when(courierRepository.findById(-99L)).thenReturn(Optional.empty());
+    var courier = courierService.fireCourier(-99L);
+    assertThat(courier).isNull();
+    verify(courierRepository, VerificationModeFactory.times(1)).findById(-99L);
+  }
+
+  @Test
+  void whenFireCourierValidId_thenReturnCourier() {
+    when(courierRepository.findById(1L)).thenReturn(Optional.of(c1));
+    var courier = courierService.fireCourier(1L);
+    assertThat(courier.isActive()).isFalse();
+    verify(courierRepository, VerificationModeFactory.times(1)).findById(1L);
+    verify(deliveryService, VerificationModeFactory.times(1)).reAssignCourierAssignedDeliveries(c1);
+    verify(courierRepository, VerificationModeFactory.times(1)).save(any());
   }
 }
