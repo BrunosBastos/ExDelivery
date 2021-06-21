@@ -3,6 +3,9 @@ package tqs.exdelivery.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
@@ -11,9 +14,12 @@ import tqs.exdelivery.repository.ReviewRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourierService {
+  private static final int PAGE_SIZE = 10;
+
   private static final int EARTH_RADIUS = 6371;
   private static final Logger logger = LogManager.getLogger(CourierService.class);
   @Autowired private CourierRepository courierRepository;
@@ -32,7 +38,7 @@ public class CourierService {
       assignedCouriers.add(delivery.getCourier().getId());
     }
 
-    return courierRepository.findAllByIdNotIn(assignedCouriers);
+    return courierRepository.findAllByIdNotInAndActiveIsTrue(assignedCouriers);
   }
 
   public Courier assignBestCourier(Delivery delivery) {
@@ -83,5 +89,26 @@ public class CourierService {
     }
     courier.setReputation((double) total / reviews.size());
     courierRepository.save(courier);
+  }
+
+  public List<Courier> getCouriers(int page) {
+    Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
+    return courierRepository.findAllByActiveIsTrue(pageable).getContent();
+  }
+
+  public Courier fireCourier(Long courierId) {
+    Optional<Courier> courierdb = courierRepository.findById(courierId);
+    if (courierdb.isEmpty()) {
+      return null;
+    }
+    Courier courier = courierdb.get();
+    // handle courier foreign key constraints
+    // such as the deliveries he has assigned to him
+    deliveryService.reAssignCourierAssignedDeliveries(courier);
+
+    // update courier to be inactive
+    courier.setActive(false);
+    courierRepository.save(courier);
+    return courier;
   }
 }

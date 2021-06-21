@@ -47,11 +47,11 @@ class DeliveryServiceTest {
   void setUp() {
     var user = new User();
     user.setEmail("tiago@gmail.com");
-    c1 = new Courier(1L, 5, 0.0, 0.0, user);
+    c1 = new Courier(1L, 5, 0.0, 0.0, user, true);
 
     var user2 = new User();
     user2.setEmail("tiago@gmail.com");
-    var c2 = new Courier(2L, 5, 0, 0, user2);
+    var c2 = new Courier(2L, 5, 0, 0, user2, true);
 
     d1 = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, c1);
     d2 = new Delivery(2L, 2L, 50.23123, 50.63244, "pending", DELIVERY_HOST, null);

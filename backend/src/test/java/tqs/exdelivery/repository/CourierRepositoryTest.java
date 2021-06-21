@@ -57,7 +57,7 @@ class CourierRepositoryTest {
               entityManager.persistAndFlush(courier);
             });
     List<Courier> courierList =
-        courierRepository.findAllByIdNotIn(Arrays.asList(c1.getId(), c2.getId()));
+        courierRepository.findAllByIdNotInAndActiveIsTrue(Arrays.asList(c1.getId(), c2.getId()));
     assertThat(courierList).hasSize(1).extracting(Courier::getId).contains(c3.getId());
   }
 }

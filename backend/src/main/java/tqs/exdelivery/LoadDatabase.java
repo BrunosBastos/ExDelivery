@@ -74,10 +74,10 @@ class LoadDatabase {
       Arrays.asList(adminUser, courierUser1, courierUser2, courierUser3, courierUser4)
           .forEach(users::save);
 
-      Courier courier1 = new Courier(1L, 3.5, 0.0, 0.0, courierUser1);
-      Courier courier2 = new Courier(2L, 5, 0.0, 0.0, courierUser2);
-      Courier courier3 = new Courier(3L, 3, 0.0, 0.0, courierUser3);
-      Courier courier4 = new Courier(4L, 2.0, 0.0, 0.0, courierUser4);
+      Courier courier1 = new Courier(1L, 3.5, 0.0, 0.0, courierUser1, true);
+      Courier courier2 = new Courier(2L, 5, 0.0, 0.0, courierUser2, true);
+      Courier courier3 = new Courier(3L, 3, 0.0, 0.0, courierUser3, true);
+      Courier courier4 = new Courier(4L, 2.0, 0.0, 0.0, courierUser4, true);
       Arrays.asList(courier1, courier2, courier3, courier4).forEach(couriers::save);
 
       Delivery delivery1 =
