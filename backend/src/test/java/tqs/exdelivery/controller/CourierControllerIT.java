@@ -12,8 +12,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.exdelivery.repository.DeliveryRepository;
 
-import javax.transaction.Transactional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -21,7 +19,6 @@ import static org.hamcrest.Matchers.is;
 @AutoConfigureTestDatabase
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class CourierControllerIT {
 

@@ -205,9 +205,9 @@ class DeliveryServiceTest {
   }
 
   @Test
-  void whenGetDeliveryWithCourier_thenReturnDelivery(){
+  void whenGetDeliveryWithCourier_thenReturnDelivery() {
     when(deliveryRepository.findById(any())).thenReturn(Optional.of(d1));
-    var delivery = deliveryService.getDelivery(c1.getId(),c1);
+    var delivery = deliveryService.getDelivery(c1.getId(), c1);
     assertThat(delivery).isNotNull();
     assertThat(delivery.getId()).isEqualTo(d1.getId());
     assertThat(delivery.getCourier().getId()).isEqualTo(d1.getCourier().getId());

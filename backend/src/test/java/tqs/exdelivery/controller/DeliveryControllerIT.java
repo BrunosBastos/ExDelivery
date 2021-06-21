@@ -281,4 +281,49 @@ class DeliveryControllerIT {
         .and()
         .statusLine("400 Can't confirm this delivery");
   }
+
+  @Test
+  @Order(13)
+  @WithMockUser(value = "tiago@gmail.com")
+  void whenGetDeliveryAndValidCourier_thenReturnValidResponse() {
+    RestAssuredMockMvc.given()
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .body("id", is(1))
+        .body("courier.id", is(1));
+  }
+
+  @Test
+  @Order(14)
+  @WithMockUser(value = "joaquim@gmail.com")
+  void whenGetDeliveryWithInvalidCourier_thenReturnError() {
+
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .and()
+        .statusLine("400 Can't find this delivery");
+  }
+
+  @Test
+  @Order(15)
+  @WithMockUser(value = "leandro@gmail.com")
+  void whenGetDeliveryWithSuperUser_thenReturnValidResponse() {
+
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .contentType(ContentType.JSON)
+        .body("id", is(1))
+        .body("courier.id", is(1));
+  }
 }

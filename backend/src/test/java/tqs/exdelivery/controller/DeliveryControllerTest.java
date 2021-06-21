@@ -228,12 +228,12 @@ class DeliveryControllerTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
     when(deliveryService.getDelivery(any(), any())).thenReturn(null);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .statusLine("400 Can't find this delivery");
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Can't find this delivery");
     verify(userRepository, times(1)).findByEmail(anyString());
     verify(deliveryService, times(1)).getDelivery(any(), any());
   }
@@ -244,14 +244,14 @@ class DeliveryControllerTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
     when(deliveryService.getDelivery(any(), any())).thenReturn(del1);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .body("id", is(del1.getId().intValue()))
-            .and()
-            .body("courier.id", is((int) del1.getCourier().getId()));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("id", is(del1.getId().intValue()))
+        .and()
+        .body("courier.id", is((int) del1.getCourier().getId()));
     verify(userRepository, times(1)).findByEmail(anyString());
   }
 
@@ -261,17 +261,15 @@ class DeliveryControllerTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(admin));
     when(deliveryService.getDelivery(any(), any())).thenReturn(del1);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(200)
-            .body("id", is(del1.getId().intValue()));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("id", is(del1.getId().intValue()));
     verify(userRepository, times(1)).findByEmail(anyString());
     verify(deliveryService, times(1)).getDelivery(any(), any());
-
   }
-
 
   @Test
   @WithMockUser(value = "leandro@gmail.com")
@@ -281,14 +279,13 @@ class DeliveryControllerTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(validUser));
     when(deliveryService.getDelivery(any(), any())).thenReturn(null);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1")
-            .then()
-            .assertThat()
-            .statusCode(400)
-            .statusLine("400 Can't find this delivery");
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1")
+        .then()
+        .assertThat()
+        .statusCode(400)
+        .statusLine("400 Can't find this delivery");
     verify(userRepository, times(1)).findByEmail(anyString());
     verify(deliveryService, times(1)).getDelivery(any(), any());
   }
-
 }
