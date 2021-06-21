@@ -17,19 +17,21 @@ import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
 import DeliveryDetails from './pages/DeliveryDetails.tsx'
 
-const routes = [
+const routes = (token, isSuperUser) => [
   {
     path: 'app',
-    element: <DashboardLayout />,
+    element: token ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
-      { path: 'account', element: <Account /> },
+      // { path: 'account', element: <Account /> },
+      // { path: 'settings', element: <Settings /> },
+
+
       { path: 'couriers', element: <CourierList /> },
       { path: 'orders', element: <OrderList /> },
       { path: 'adminOrders', element: <AdminOrderList /> },
       { path: 'delivery/:id', element: <DeliveryDetails />},
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
-      { path: 'settings', element: <Settings /> },
       { path: 'addProduct', element: <AddProduct />},
       { path: 'addSupplier', element: <AddSupplier />},
       { path: 'product/:id', element: <PharmacyProductDetails />},
@@ -39,7 +41,7 @@ const routes = [
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: !token ? <MainLayout /> : <Navigate to="/app/dashboard" />,
     children: [
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },

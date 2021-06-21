@@ -28,6 +28,7 @@ import NavItem from './NavItem';
 import HistoryIcon from '@material-ui/icons/History';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
+import { UserType, isUserType } from "src/consts/userType";
 import useAuthStore from 'src/stores/useAuthStore';
 
 const user = {
@@ -40,78 +41,75 @@ const items = [
   {
     href: '/app/dashboard',
     icon: BarChartIcon,
-    title: 'Dashboard'
+    title: 'Dashboard',
+    type: UserType.ANY,
   },
-  {
-    href: '/app/couriers',
-    icon: UsersIcon,
-    title: 'Couriers'
-  },
+  // {
+  //   href: '/app/couriers',
+  //   icon: UsersIcon,
+  //   title: 'Couriers',
+  //   type: UserType.ADMIN,
+  // },
   {
     href: '/app/orders',
     icon: HistoryIcon,
-    title: 'Orders'
+    title: 'Orders',
+    type: UserType.CLIENT,
   },
   {
     href: '/app/adminOrders',
     icon: HistoryIcon,
-    title: 'Platform Orders'
+    title: 'Platform Orders',
+    type: UserType.ADMIN,
   },
-  {
-    href: '/app/shoppingCart',
-    icon: ShoppingCartIcon,
-    title: 'Shopping Cart'
-  },
-  {
-    href: '/app/products',
-    icon: ShoppingBagIcon,
-    title: 'Products'
-  },
-  {
-    href: '/app/account',
-    icon: UserIcon,
-    title: 'Account'
-  },
-  {
-    href: '/app/settings',
-    icon: SettingsIcon,
-    title: 'Settings'
-  },
-  {
-    href: '/app/addProduct',
-    icon: PlusCircleIcon,
-    title: 'Add Product'
-  },
-  {
-    href: '/app/addSupplier',
-    icon: LocalPharmacyIcon,
-    title: 'Add Supplier'
-  },
-  {
-    href: '/app/product/1',
-    icon: PackageIcon,
-    title: 'Product Details'
-  },
-  {
-    href: '/login',
-    icon: LockIcon,
-    title: 'Login'
-  },
-  {
-    href: '/register',
-    icon: UserPlusIcon,
-    title: 'Register'
-  },
-  {
-    href: '/404',
-    icon: AlertCircleIcon,
-    title: 'Error'
-  }
+  // {
+  //   href: '/app/shoppingCart',
+  //   icon: ShoppingCartIcon,
+  //   title: 'Shopping Cart',
+  //   type: UserType.ANY,
+  // },
+  // {
+  //   href: '/app/products',
+  //   icon: ShoppingBagIcon,
+  //   title: 'Products',
+  //   type: UserType.ANY,
+  // },
+  // {
+  //   href: '/app/account',
+  //   icon: UserIcon,
+  //   title: 'Account',
+  //   type: UserType.ANY,
+  // },
+  // {
+  //   href: '/app/settings',
+  //   icon: SettingsIcon,
+  //   title: 'Settings',
+  //   type: UserType.ANY,
+  // },
+  // {
+  //   href: '/app/addProduct',
+  //   icon: PlusCircleIcon,
+  //   title: 'Add Product',
+  //   type: UserType.ANY,
+  // },
+  // {
+  //   href: '/app/addSupplier',
+  //   icon: LocalPharmacyIcon,
+  //   title: 'Add Supplier',
+  //   type: UserType.ANY,
+  // },
+  // {
+  //   href: '/app/product/1',
+  //   icon: PackageIcon,
+  //   title: 'Product Details',
+  //   type: UserType.ANY,
+  // },
 ];
 
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   const location = useLocation();
   const theme = useTheme();
+  const user = useAuthStore(state => state.user);
   const hidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
   const hiddenDown = useMediaQuery(theme => theme.breakpoints.down('lg'));
 
@@ -163,14 +161,15 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       <Divider />
       <Box sx={{ p: 2 }}>
         <List>
-          {items.map((item) => (
-            <NavItem
-              href={item.href}
-              key={item.title}
-              title={item.title}
-              icon={item.icon}
-            />
-          ))}
+          {items.filter((item) => isUserType(user.superUser, item.type))
+            .map((item) => (
+              <NavItem
+                href={item.href}
+                key={item.title}
+                title={item.title}
+                icon={item.icon}
+              />
+            ))}
         </List>
       </Box>
     </Box>
@@ -178,7 +177,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
 
   return (
     <>
-      { hidden ? null :
+      {hidden ? null :
         <Drawer
           anchor="left"
           onClose={onMobileClose}
