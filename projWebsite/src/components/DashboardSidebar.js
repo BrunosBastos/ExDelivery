@@ -38,18 +38,18 @@ const user = {
 };
 
 const items = [
-  {
-    href: '/app/dashboard',
-    icon: BarChartIcon,
-    title: 'Dashboard',
-    type: UserType.ANY,
-  },
   // {
-  //   href: '/app/couriers',
-  //   icon: UsersIcon,
-  //   title: 'Couriers',
-  //   type: UserType.ADMIN,
+  //   href: '/app/dashboard',
+  //   icon: BarChartIcon,
+  //   title: 'Dashboard',
+  //   type: UserType.ANY,
   // },
+  {
+    href: '/app/couriers',
+    icon: UsersIcon,
+    title: 'Couriers',
+    type: UserType.ADMIN,
+  },
   {
     href: '/app/orders',
     icon: HistoryIcon,
@@ -62,48 +62,6 @@ const items = [
     title: 'Platform Orders',
     type: UserType.ADMIN,
   },
-  // {
-  //   href: '/app/shoppingCart',
-  //   icon: ShoppingCartIcon,
-  //   title: 'Shopping Cart',
-  //   type: UserType.ANY,
-  // },
-  // {
-  //   href: '/app/products',
-  //   icon: ShoppingBagIcon,
-  //   title: 'Products',
-  //   type: UserType.ANY,
-  // },
-  // {
-  //   href: '/app/account',
-  //   icon: UserIcon,
-  //   title: 'Account',
-  //   type: UserType.ANY,
-  // },
-  // {
-  //   href: '/app/settings',
-  //   icon: SettingsIcon,
-  //   title: 'Settings',
-  //   type: UserType.ANY,
-  // },
-  // {
-  //   href: '/app/addProduct',
-  //   icon: PlusCircleIcon,
-  //   title: 'Add Product',
-  //   type: UserType.ANY,
-  // },
-  // {
-  //   href: '/app/addSupplier',
-  //   icon: LocalPharmacyIcon,
-  //   title: 'Add Supplier',
-  //   type: UserType.ANY,
-  // },
-  // {
-  //   href: '/app/product/1',
-  //   icon: PackageIcon,
-  //   title: 'Product Details',
-  //   type: UserType.ANY,
-  // },
 ];
 
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {

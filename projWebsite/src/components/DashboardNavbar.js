@@ -41,30 +41,6 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
           <Logo />
         </RouterLink>
         <Box sx={{ flexGrow: 1 }} />
-        {hiddenDown ? null :
-          <>
-            <RouterLink to="/app/shoppingCart">
-              <IconButton style={{ color: 'white' }}>
-                <Badge
-                  badgeContent={products.length}
-                  color="secondary"
-                  variant="number"
-                >
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
-            </RouterLink>
-            <IconButton color="inherit">
-              <Badge
-                badgeContent={notifications.length}
-                color="secondary"
-                variant="dot"
-              >
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </>
-        }
         <IconButton
           color="inherit"
           onClick={logout}
