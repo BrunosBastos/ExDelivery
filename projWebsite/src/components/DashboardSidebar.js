@@ -33,7 +33,7 @@ import useAuthStore from 'src/stores/useAuthStore';
 const user = {
   avatar: '/static/images/avatars/default_avatar.jpg',
   jobTitle: '',
-  name: useAuthStore.getState().user ? useAuthStore.getState().user.name : ''
+  name: useAuthStore.getState().user?.name
 };
 
 const items = [
@@ -51,6 +51,11 @@ const items = [
     href: '/app/orders',
     icon: HistoryIcon,
     title: 'Orders'
+  },
+  {
+    href: '/app/adminOrders',
+    icon: HistoryIcon,
+    title: 'Platform Orders'
   },
   {
     href: '/app/shoppingCart',

@@ -4,6 +4,7 @@ import MainLayout from 'src/components/MainLayout';
 import Account from 'src/pages/Account';
 import CourierList from 'src/pages/CourierList';
 import OrderList from 'src/pages/OrderList.tsx';
+import AdminOrderList from 'src/pages/AdminOrderList.tsx';
 import Dashboard from 'src/pages/Dashboard';
 import Login from 'src/pages/Login.tsx';
 import NotFound from 'src/pages/NotFound';
@@ -14,6 +15,7 @@ import AddProduct from './pages/AddProduct.tsx';
 import AddSupplier from './pages/AddSupplier.tsx';
 import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
+import DeliveryDetails from './pages/DeliveryDetails.tsx'
 
 const routes = [
   {
@@ -23,6 +25,8 @@ const routes = [
       { path: 'account', element: <Account /> },
       { path: 'couriers', element: <CourierList /> },
       { path: 'orders', element: <OrderList /> },
+      { path: 'adminOrders', element: <AdminOrderList /> },
+      { path: 'delivery/:id', element: <DeliveryDetails />},
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
       { path: 'settings', element: <Settings /> },

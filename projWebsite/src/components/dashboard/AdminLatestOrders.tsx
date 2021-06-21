@@ -30,6 +30,18 @@ interface Order {
   purchaseHost: string;
   purchaseId: number;
   state: string;
+  courier: {
+    id: any;
+    lat: number;
+    lon: number;
+    reputation: number;
+    user: {
+      email: string;
+      name: string;
+      superUser: boolean;
+      userId: any;
+    }
+  };
 }
 
 const notifySuccess = (msg) => {
@@ -44,18 +56,19 @@ const notifyError = (msg) => {
     });
 }
 
-interface LatestOrdersProps {
+interface AdminLatestOrdersProps {
   recent: string;
+  email: string;
 }
 
-const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
+const AdminLatestOrders: React.FC<AdminLatestOrdersProps> = ({recent, email}) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    DeliveryService.getMyDeliveries(page, recent == 'desc')
+    DeliveryService.getDeliveries(page, recent == 'desc', email)
       .then( (res) => {
         if (res.status === 200) {
           return res.json()
@@ -64,6 +77,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
         return null;
       })
       .then((res) => {
+        console.log(res)
         if (res) {
           setOrders(res)
         }
@@ -71,7 +85,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
       .catch(() => {
         console.log("Something went wrong")
       })
-  }, [recent])
+  }, [recent, email])
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -98,6 +112,9 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
                   Delivery Location
                 </TableCell>
                 <TableCell>
+                  Courier Email
+                </TableCell>
+                <TableCell>
                   Purchase Host
                 </TableCell>
                 <TableCell>
@@ -115,7 +132,6 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
                   key={order.id+recent}
                   style={{cursor:'pointer'}}
                   onClick={() => navigate('/app/delivery/'+order.id, { replace: true })}
-                
                 >
                   <TableCell>
                     {order.id}
@@ -123,6 +139,9 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
                   <TableCell>
                     <p>Latitude {order.lat}</p>
                     <p>Longitude {order.lon}</p>
+                  </TableCell>
+                  <TableCell>
+                    {order.courier?.user?.email}
                   </TableCell>
                   <TableCell>
                     {order.purchaseHost}
@@ -164,4 +183,4 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
   )
 }
 
-export default LatestOrders;
+export default AdminLatestOrders;

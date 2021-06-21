@@ -1,6 +1,5 @@
 package tqs.exdelivery.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,8 +30,6 @@ public class Courier {
   @Column(nullable = false)
   private double lon;
 
-  @JsonIgnore
-  @lombok.ToString.Exclude
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   private User user;
