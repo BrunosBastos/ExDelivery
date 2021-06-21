@@ -12,7 +12,9 @@ import useShopCartStore from 'src/stores/useShopCartStore';
 const App = () => {
   useAuthStore();
   useShopCartStore();
-  const routing = useRoutes(routes);
+  const token = useAuthStore(state => state.token);
+  const user = useAuthStore(state => state.user);
+  const routing = useRoutes(routes(token, user?.superUser));
 
   return (
     <PersistGate>

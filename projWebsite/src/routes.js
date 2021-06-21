@@ -17,29 +17,25 @@ import PharmacyProductDetails from './pages/PharmarcyProductDetails.tsx';
 import ShoppingCart from './pages/ShoppingCart.tsx';
 import DeliveryDetails from './pages/DeliveryDetails.tsx'
 
-const routes = [
+const routes = (token, isSuperUser) => [
   {
     path: 'app',
-    element: <DashboardLayout />,
+    element: token ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
-      { path: 'account', element: <Account /> },
-      { path: 'couriers', element: <CourierList /> },
-      { path: 'orders', element: <OrderList /> },
-      { path: 'adminOrders', element: <AdminOrderList /> },
+      // Admin Only
+      { path: 'couriers', element: isSuperUser ? <CourierList />: <Navigate to="/404" /> },
+      { path: 'adminOrders', element: isSuperUser ? <AdminOrderList />: <Navigate to="/404" /> },
+      // Clients Only
+      { path: 'orders', element: !isSuperUser ? <OrderList />: <Navigate to="/404" /> },
+      // Anyone
+      { path: 'dashboard', element: <Navigate to={ isSuperUser ? "/app/adminOrders" : "/app/orders"} />/*<Dashboard />*/ },
       { path: 'delivery/:id', element: <DeliveryDetails />},
-      { path: 'dashboard', element: <Dashboard /> },
-      { path: 'products', element: <ProductList /> },
-      { path: 'settings', element: <Settings /> },
-      { path: 'addProduct', element: <AddProduct />},
-      { path: 'addSupplier', element: <AddSupplier />},
-      { path: 'product/:id', element: <PharmacyProductDetails />},
-      { path: 'shoppingCart', element: <ShoppingCart />},
-      { path: '*', element: <Navigate to="/404" /> }
+      { path: '*', element: <Navigate to="/404" /> },
     ]
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: !token ? <MainLayout /> : <Navigate to="/app/dashboard" />,
     children: [
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },

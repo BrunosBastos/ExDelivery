@@ -5,13 +5,14 @@ import org.openqa.selenium.WebDriver;
 
 public class RegisterPage {
   private final WebDriver driver;
+  private final String baseUrl = "http://localhost:3001/";
 
   public RegisterPage(WebDriver driver) {
     this.driver = driver;
   }
 
   public void goTo() {
-    driver.get("http://localhost:3000/register");
+    driver.get(baseUrl + "register");
   }
 
   public void insertEmail(String email) {
