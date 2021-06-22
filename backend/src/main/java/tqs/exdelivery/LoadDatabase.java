@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Configuration
 class LoadDatabase {
 
-  @Value("${MY_HOST:localhost}")
+  @Value("${app.MY_HOST:localhost}")
   private String DELIVERY_HOST;
   private static final String DELIVERED_STATE = "delivered";
   private static final String EXAMPLE_PASS = "string";
@@ -33,7 +33,7 @@ class LoadDatabase {
 
     return args -> {
 
-      String deliveryHost = "http://" + DELIVERY_HOST + ":8080/purchases";
+      String deliveryHost = "http://" + DELIVERY_HOST + ":8080/api/v1/purchases";
 
       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
       User adminUser =
