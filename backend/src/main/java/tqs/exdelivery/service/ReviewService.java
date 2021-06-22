@@ -16,6 +16,20 @@ public class ReviewService {
 
   @Autowired CourierService courierService;
 
+
+  public Review getReview(Long deliveryId) {
+    var delivery = deliveryRepository.findById(deliveryId);
+
+    if (delivery.isPresent()) {
+      var review = reviewRepository.findByDelivery(delivery.get());
+
+      if (review.isPresent()) {
+        return review.get();
+      }
+    }
+    return null;
+  }
+
   public Review createReview(Long deliveryId, ReviewPOJO reviewPOJO) {
 
     var delivery = deliveryRepository.findById(deliveryId);

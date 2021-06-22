@@ -1,5 +1,6 @@
 package tqs.exdelivery.controller;
 
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import tqs.exdelivery.repository.CourierRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -73,6 +76,7 @@ class ReviewControllerIT {
         .post("api/v1/deliveries/4/reviews")
         .then()
         .assertThat()
+            .contentType(ContentType.JSON)
         .statusCode(200)
         .body("rating", is(reviewPOJO.getRating()))
         .and()
@@ -98,5 +102,38 @@ class ReviewControllerIT {
         .assertThat()
         .statusCode(400)
         .statusLine("400 Could not create review");
+  }
+
+
+  @Test
+  @WithMockUser(value = "test")
+  @Order(5)
+  void whenGetExistentReview_thenReturnReview() {
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .body(reviewPOJO)
+            .get("api/v1/deliveries/4/reviews")
+            .then()
+            .assertThat()
+            .contentType(ContentType.JSON)
+            .statusCode(200)
+            .body("rating", is(reviewPOJO.getRating()))
+            .and()
+            .body("comment", is(reviewPOJO.getComment()))
+            .and()
+            .body("delivery.id", is(4));
+  }
+
+  @Test
+  @WithMockUser(value = "test")
+  @Order(6)
+  void whenGetNonExistentReview_thenReturnNotFound() {
+    RestAssuredMockMvc.given()
+            .header("Content-Type", "application/json")
+            .get("api/v1/deliveries/1000/reviews")
+            .then()
+            .assertThat()
+            .statusCode(404)
+            .statusLine("404 Review not found");
   }
 }

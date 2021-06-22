@@ -17,6 +17,19 @@ public class ReviewController {
 
   @Autowired ReviewService reviewService;
 
+
+  @GetMapping("/deliveries/{id}/reviews")
+  public ResponseEntity<Review> getReview(
+          @PathVariable Long id) {
+
+    var review = reviewService.getReview(id);
+    if (review == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found");
+    }
+
+    return ResponseEntity.ok().body(review);
+  }
+
   @PostMapping("/deliveries/{id}/reviews")
   public ResponseEntity<Review> reviewDelivery(
       @PathVariable Long id, @Valid @RequestBody ReviewPOJO reviewPOJO) {
