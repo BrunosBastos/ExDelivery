@@ -33,7 +33,7 @@ services:
   db_ex:
     image: mysql:5.7
     ports:
-      - "3307:3306"
+      - "3307:3307"
     restart: always
     environment:
       MYSQL_DATABASE: exdelivery
