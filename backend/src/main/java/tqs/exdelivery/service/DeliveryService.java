@@ -78,7 +78,8 @@ public class DeliveryService {
     Optional<Delivery> delivery = deliveryRepository.findById(deliveryId);
     // delivery not found or
     // courier making the request isn't assigned to this delivery
-    if (delivery.isEmpty() || courier != null && delivery.get().getCourier().getId() != courier.getId()) {
+    if (delivery.isEmpty()
+        || courier != null && delivery.get().getCourier().getId() != courier.getId()) {
       return null;
     }
     return delivery.get();

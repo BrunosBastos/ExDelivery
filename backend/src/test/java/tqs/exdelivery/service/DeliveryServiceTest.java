@@ -29,6 +29,7 @@ class DeliveryServiceTest {
 
   private final String DELIVERY_HOST = "http:localhost:8080/";
   Courier c1;
+  Courier c2;
   Delivery d1;
   Delivery d2;
   Delivery d3;
@@ -51,7 +52,7 @@ class DeliveryServiceTest {
 
     var user2 = new User();
     user2.setEmail("tiago@gmail.com");
-    var c2 = new Courier(2L, 5, 0, 0, user2, true);
+    c2 = new Courier(2L, 5, 0, 0, user2, true);
 
     d1 = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, c1);
     d2 = new Delivery(2L, 2L, 50.23123, 50.63244, "pending", DELIVERY_HOST, null);
@@ -179,5 +180,53 @@ class DeliveryServiceTest {
     when(deliveryRepository.findAllByState("pending")).thenReturn(Arrays.asList(d2, d3, d4));
     deliveryService.checkDeliveriesToAssign();
     verify(deliveryRepository, times(3)).save(any());
+  }
+
+  @Test
+  void whenReassignCourier_thenVerifyMethodCall() {
+    d3.setCourier(null);
+    d4.setCourier(null);
+    d3.setState("pending");
+    d4.setState("pending");
+    when(deliveryRepository.findAllByStateAndCourier(any(), any(Courier.class)))
+        .thenReturn(Arrays.asList(d3, d4));
+    deliveryService.reAssignCourierAssignedDeliveries(c1);
+    verify(deliveryRepository, times(2)).save(any());
+    verify(courierService, times(2)).assignBestCourier(any());
+  }
+
+  @Test
+  void whenGetDeliveryWithInvalidId_thenReturnNull() {
+    when(deliveryRepository.findById(any())).thenReturn(Optional.empty());
+    var delivery = deliveryService.getDelivery(1000L, c1);
+    assertThat(delivery).isNull();
+
+    verify(deliveryRepository, times(1)).findById(1000L);
+  }
+
+  @Test
+  void whenGetDeliveryWithCourier_thenReturnDelivery() {
+    when(deliveryRepository.findById(any())).thenReturn(Optional.of(d1));
+    var delivery = deliveryService.getDelivery(c1.getId(), c1);
+    assertThat(delivery).isNotNull();
+    assertThat(delivery.getId()).isEqualTo(d1.getId());
+    assertThat(delivery.getCourier().getId()).isEqualTo(d1.getCourier().getId());
+    verify(deliveryRepository, times(1)).findById(1L);
+  }
+
+  @Test
+  void whenGetDeliveryWithAdmin_thenReturnDelivery() {
+    when(deliveryRepository.findById(any())).thenReturn(Optional.of(d1));
+    var delivery = deliveryService.getDelivery(1000L, null);
+    assertThat(delivery.getId()).isEqualTo(d1.getId());
+    verify(deliveryRepository, times(1)).findById(any());
+  }
+
+  @Test
+  void whenGetDeliveryWithWrongCourier_thenReturnDelivery() {
+    when(deliveryRepository.findById(any())).thenReturn(Optional.of(d1));
+    var delivery = deliveryService.getDelivery(1L, c2);
+    assertThat(delivery).isNull();
+    verify(deliveryRepository, times(1)).findById(any());
   }
 }

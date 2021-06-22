@@ -1,5 +1,6 @@
 package tqs.exdelivery.controller;
 
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import tqs.exdelivery.pojo.ReviewPOJO;
-import tqs.exdelivery.repository.CourierRepository;
+import tqs.exdelivery.repository.DeliveryRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -20,83 +20,82 @@ import static org.hamcrest.Matchers.is;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class ReviewControllerIT {
+class CourierControllerIT {
 
-  ReviewPOJO reviewPOJO;
   @Autowired private MockMvc mvc;
-  @Autowired private CourierRepository courierRepository;
+  @Autowired private DeliveryRepository deliveryRepository;
 
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
-    reviewPOJO = new ReviewPOJO(3, "test");
   }
 
   @Test
-  @WithMockUser(value = "test")
+  @WithMockUser(value = "leandro@gmail.com")
   @Order(1)
-  void whenCreateReviewAndNotDelivered_thenReturnError() {
+  void whenGetAllCouriersWithAdmin_thenReturnAllCouriers() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/3/reviews")
-        .then()
-        .assertThat()
-        .statusCode(400)
-        .statusLine("400 Could not create review");
-  }
-
-  @Test
-  @WithMockUser(value = "test")
-  @Order(2)
-  void whenCreateReviewAndInvalidDelivery_thenReturnError() {
-    RestAssuredMockMvc.given()
-        .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/1000/reviews")
-        .then()
-        .assertThat()
-        .statusCode(400)
-        .statusLine("400 Could not create review");
-  }
-
-  @Test
-  @WithMockUser(value = "test")
-  @Order(3)
-  void whenCreateReview_thenReturnReview() {
-
-    var rating = courierRepository.findById(2L).get().getReputation();
-
-    RestAssuredMockMvc.given()
-        .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/4/reviews")
+        .get("api/v1/couriers?page=0")
         .then()
         .assertThat()
         .statusCode(200)
-        .body("rating", is(reviewPOJO.getRating()))
+        .contentType(ContentType.JSON)
         .and()
-        .body("comment", is(reviewPOJO.getComment()))
-        .and()
-        .body("delivery.id", is(4));
-    ;
-
-    var newRating = courierRepository.findById(2L).get().getReputation();
-
-    assertThat(newRating).isNotEqualTo(rating);
+        .body("$.size()", is(4));
   }
 
   @Test
-  @WithMockUser(value = "test")
-  @Order(4)
-  void whenCreateReviewAndAlreadyReviewed_thenReturnError() {
+  @WithMockUser(value = "tiago@gmail.com")
+  @Order(2)
+  void whenGetAllCouriersWithNotAdmin_thenReturnAllCouriers() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/4/reviews")
+        .get("api/v1/couriers?page=0")
         .then()
         .assertThat()
-        .statusCode(400)
-        .statusLine("400 Could not create review");
+        .statusCode(400);
+  }
+
+  @Test
+  @WithMockUser(value = "tiago@gmail.com")
+  @Order(3)
+  void whenFireCouriersWithNoAdmin_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .put("api/v1/couriers/1")
+        .then()
+        .assertThat()
+        .statusCode(400);
+  }
+
+  @Test
+  @WithMockUser(value = "leandro@gmail.com")
+  @Order(4)
+  void whenFireCouriersWithInvalidCourier_thenReturnError() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .put("api/v1/couriers/-99")
+        .then()
+        .assertThat()
+        .statusCode(400);
+  }
+
+  @Test
+  @WithMockUser(value = "leandro@gmail.com")
+  @Order(5)
+  void whenFireCouriers_thenReturnCourier() {
+    RestAssuredMockMvc.given()
+        .header("Content-Type", "application/json")
+        .put("api/v1/couriers/1")
+        .then()
+        .assertThat()
+        .statusCode(200)
+        .body("id", is(1))
+        .body("active", is(false));
+
+    var deliverydb = deliveryRepository.findById(3L).orElse(null);
+    assertThat(deliverydb).isNotNull();
+    assertThat(deliverydb.getCourier().getId()).isNotEqualTo(1);
   }
 }
