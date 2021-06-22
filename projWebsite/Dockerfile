@@ -20,6 +20,7 @@ RUN yarn install
 # Arguments
 ARG REACT_APP_API_BASE_URL
 ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+ENV REACT_APP_RUNNING_MODE="PRODUCTION"
 
 
 #copy your project files: (also bad for development, use volume(https://docs.docker.com/storage/volumes/) instead)
