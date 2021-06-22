@@ -53,13 +53,13 @@ const items = [
   {
     href: '/app/orders',
     icon: HistoryIcon,
-    title: 'Orders',
+    title: 'Deliveries',
     type: UserType.CLIENT,
   },
   {
     href: '/app/adminOrders',
     icon: HistoryIcon,
-    title: 'Platform Orders',
+    title: 'Platform Deliveries',
     type: UserType.ADMIN,
   },
 ];

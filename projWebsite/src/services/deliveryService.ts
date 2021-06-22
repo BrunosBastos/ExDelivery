@@ -1,4 +1,4 @@
-import { EXDELIVERY_API_BASE_URL } from '../config/index';
+import { EXDELIVERY_API_BASE_URL, MEDEX_API_BASE_URL } from '../config/index';
 import useAuthStore from 'src/stores/useAuthStore';
 
 
@@ -44,6 +44,19 @@ class DeliveryService {
     confirmDelivery(id) {
         return fetch(EXDELIVERY_API_BASE_URL + 'deliveries/'+id, {
             method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization' : "Bearer "+ useAuthStore.getState().token
+            }
+        })
+    }
+
+    getPurchaseDetails(purchaseHost, id: any) {
+        console.log(purchaseHost)
+        return fetch(MEDEX_API_BASE_URL + 'purchases/' + id, {
+            method: 'GET',
             mode: 'cors',
             headers: {
                 'accept': 'application/json',
