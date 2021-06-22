@@ -1,4 +1,3 @@
 package tqs.exdelivery.frontend;
 
-public class DeliveryDetailsSteps {
-}
+public class DeliveryDetailsSteps {}
