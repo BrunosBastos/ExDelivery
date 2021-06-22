@@ -84,4 +84,31 @@ class ReviewServiceTest {
     assertThat(review.getCourier().getId()).isEqualTo(delivery.getCourier().getId());
     assertThat(review.getDelivery().getId()).isEqualTo(delivery.getId());
   }
+
+  @Test
+  void whenGetExistentReview_thenReturnReview() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.of(existingReview));
+    var review = reviewService.getReview(1L);
+    assertThat(review.getRating()).isEqualTo(existingReview.getRating());
+    assertThat(review.getComment()).isEqualTo(existingReview.getComment());
+    assertThat(review.getCourier().getId()).isEqualTo(delivery.getCourier().getId());
+    assertThat(review.getDelivery().getId()).isEqualTo(delivery.getId());
+  }
+
+  @Test
+  void whenGetNonExistentDelivery_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.getReview(1L);
+    assertThat(review).isNull();
+  }
+
+  @Test
+  void whenGetNonExistentReview_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.empty());
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.getReview(1L);
+    assertThat(review).isNull();
+  }
 }
