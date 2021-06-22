@@ -40,6 +40,7 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin_pass
       MYSQL_ROOT_PASSWORD: 0x1c0e6ae
+      MYSQL_TCP_PORT: 3307
     volumes:
       - db_ex-data:/var/lib/mysql
     networks:
