@@ -1,7 +1,6 @@
 import {useEffect,useState} from 'react';
 import { Helmet } from 'react-helmet';
 import getInitials from 'src/utils/getInitials';
-import products from 'src/__mocks__/products'
 import order from 'src/__mocks__/order';
 import { makeStyles } from '@material-ui/core/styles';
 import StarRatings from 'react-star-ratings';
@@ -55,17 +54,15 @@ const notifyError = (msg) => {
   
 const DeliveryDetails = () => {
     const [price, setPrice] = useState("0.00");
-    // maybe useful to check later on, if a user has already reviewed a product
-    const [review, setReview] = useState(null);
     const  classes  = styles();
+    const [order, setOrder] = useState(null);
     const [rating, setRating] = useState(0);
-    const [reviewdescription, setReviewDescription] = useState("");
+    const [products, setProducts] = useState([]);
     const [delivery, setDelivery] = useState(null);
     const url = window.location.pathname;
     const delivery_id = url.substring(url.lastIndexOf('/') + 1);
 
     useEffect(() => {
-        console.log(useAuthStore.getState())
         DeliveryService.getDelivery(delivery_id)
           .then( (res) => {
             if (res.status === 200) {
@@ -78,11 +75,31 @@ const DeliveryDetails = () => {
             console.log(res)
             if (res) {
               setDelivery(res)
+              DeliveryService.getPurchaseDetails(res?.purchaseHost, delivery_id)
+              .then( (res2) => {
+                if (res2.status === 200) {
+                  return res2.json()
+                }
+                notifyError("Something went wrong")
+                return null;
+              })
+              .then((res2) => {
+                console.log(res2)
+                if (res2) {
+                  setOrder(res2);
+                  getTotalPrice(res2)
+                }
+              })
+              .catch(() => {
+                console.log("Something went wrong")
+              })
             }
           })
           .catch(() => {
             console.log("Something went wrong")
           })
+
+    
     }, [])
 
     const confirmDelivery = () => {
@@ -106,24 +123,19 @@ const DeliveryDetails = () => {
             })
     }
 
-    const getTotalPrice = () => {
+    const getTotalPrice = (order) => {
         let totalPrice = 0;
-        for (let i = 0; i < products.length; i++) {
-            totalPrice += products[i].price * products[i].quantity;
+        for (let i = 0; i < order?.products?.length; i++) {
+            let product = order.products[i].product;
+            totalPrice += product.price * order.products[i].productAmount;
         }
         setPrice(totalPrice.toFixed(2))
     }
+
     const changeRating = ( newRating, name ) => {
         setRating(newRating);
     }
-   
-    const handleReviewText = (event) => {
-        setReviewDescription(event.target.value)
-    } 
 
-    useEffect(() => {
-        getTotalPrice()
-    }, [products])
     return(
         <>
             <Helmet>
@@ -141,7 +153,7 @@ const DeliveryDetails = () => {
                 item
                 lg={8}
                 md={8}
-                xs={8}
+                xs={12}
             className={classes.root}
             >
                 <form
@@ -187,7 +199,7 @@ const DeliveryDetails = () => {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                            {products.map((product) => (
+                            {order?.products?.map((product) => (
                                 <>
                                 <TableRow
                                 hover
@@ -201,34 +213,36 @@ const DeliveryDetails = () => {
                                     }}
                                     >
                                     <Avatar
-                                        src={product.image}
+                                        src={product.product.image}
                                         sx={{ mr: 2 }}
                                     >
-                                        {getInitials(product.name)}
+                                        {getInitials(product.product.name)}
                                     </Avatar>
                                     <Typography
                                         color="textPrimary"
                                         variant="body1"
                                     >
-                                        {product.name}
+                                        {product.product.name}
                                     </Typography>
                                     </Box>
                                 </TableCell>
                                 <TableCell>
-                                    {product.id}
+                                    {product.product.id}
                                 </TableCell>
                                 <TableCell>
-                                    {product.supplier}
+                                    {product.product.supplier.name}
+                                    <p>Latitude: {product.product.supplier.lat}</p>
+                                    <p>Longitude: {product.product.supplier.lon}</p>
                                 </TableCell>
                                 <TableCell>
-                                    {product.price}
+                                    {product.product.price}
                                 </TableCell>
                                 <TableCell>
                                     
-                                    {product.quantity}
+                                    {product.productAmount}
                                 </TableCell>
                                 <TableCell>
-                                    {(product.quantity * product.price).toFixed(2)}
+                                    {(product.productAmount * product.product.price).toFixed(2)}
                                 </TableCell>
                                 </TableRow>
                                 </>
@@ -268,9 +282,9 @@ const DeliveryDetails = () => {
                 item
                 lg={4}
                 md={4}
-                xs={4}
+                xs={12}
             >
-            <Card style= {{'marginRight': '10%'}}>
+            <Card >
             <CardHeader
                     title="Order Details"
                     />
@@ -291,7 +305,23 @@ const DeliveryDetails = () => {
                             </Typography>
                         </div>
                     </Grid>
-                    
+                        <div>
+                            <Typography variant="overline" display="block" gutterBottom>
+                                Deliver requested from
+                            </Typography>
+                            <Typography variant="body2" display="block" gutterBottom>
+                                <p>User name: {order?.user?.name}</p>
+                                <p>User email: {order?.user?.email}</p>
+                            </Typography>
+                        </div>
+                        <div>
+                            <Typography variant="overline" display="block" gutterBottom>
+                                Delivery Host
+                            </Typography>
+                            <Typography variant="body2" display="block" gutterBottom>
+                                {delivery?.purchaseHost}
+                            </Typography>
+                        </div>
                         <div>
                             <Typography variant="overline" display="block" gutterBottom>
                                 Delivery State
