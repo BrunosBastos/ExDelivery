@@ -20,7 +20,7 @@ import {
 import DeliveryService from "src/services/deliveryService";
 import { toast } from 'react-toastify';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-
+import Paginator from "src/components/paginator/Paginator";
 
 
 interface Order {
@@ -71,7 +71,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
       .catch(() => {
         console.log("Something went wrong")
       })
-  }, [recent])
+  }, [recent, page])
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -150,15 +150,7 @@ const LatestOrders: React.FC<LatestOrdersProps> = ({recent}) => {
           p: 2
         }}
       >
-        <TablePagination
-          component="div"
-          count={orders.length}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleLimitChange}
-          page={page}
-          rowsPerPage={limit}
-          rowsPerPageOptions={[10]}
-        />
+        <Paginator hasNext={orders.length == limit} page={page} changePage={(page) => setPage(page)}/>
       </Box>
     </Card>
   )
