@@ -196,6 +196,7 @@ class DeliveryControllerIT {
 
   @Test
   @Order(8)
+  @Disabled
   @WithMockUser(value = "tiago@gmail.com")
   void whenConfirmDelivery_thenReturnDelivery() {
     RestAssuredMockMvc.given()

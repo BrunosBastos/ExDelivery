@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -122,9 +123,9 @@ public class DeliveryService {
     var headers = new HttpHeaders();
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     HttpEntity<String> entity = new HttpEntity<>(headers);
-    // doesnt work if service not up
-    // var response = restTemplate.exchange(delivery.getPurchaseHost(), HttpMethod.PUT, entity,
-    // String.class).getBody();
+
+    restTemplate.exchange(delivery.getPurchaseHost()+"/"+delivery.getPurchaseId(),
+            HttpMethod.PUT, entity, String.class).getBody();
   }
 
   public List<Delivery> getCourierAssignedDeliveries(Courier courier) {
