@@ -1,5 +1,6 @@
 package tqs.exdelivery;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,9 @@ import java.util.Arrays;
 
 @Configuration
 class LoadDatabase {
-  private static final String DELIVERY_HOST = "http://localhost:8081/api/v1/";
+
+  @Value("${MY_HOST:localhost}")
+  private String DELIVERY_HOST;
   private static final String DELIVERED_STATE = "delivered";
   private static final String EXAMPLE_PASS = "string";
 
@@ -29,6 +32,9 @@ class LoadDatabase {
       ReviewRepository reviews) {
 
     return args -> {
+
+      String deliveryHost = "http://" + DELIVERY_HOST + ":8080/purchases";
+
       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
       User adminUser =
           new User(
@@ -87,7 +93,7 @@ class LoadDatabase {
               40.23123,
               50.63244,
               LoadDatabase.DELIVERED_STATE,
-              LoadDatabase.DELIVERY_HOST,
+              deliveryHost,
               courier1);
       Delivery delivery2 =
           new Delivery(
@@ -96,11 +102,11 @@ class LoadDatabase {
               44.32132,
               55.32132,
               LoadDatabase.DELIVERED_STATE,
-              LoadDatabase.DELIVERY_HOST,
+              deliveryHost,
               courier1);
       Delivery delivery3 =
           new Delivery(
-              3L, 3L, 44.32132, 51.32132, "assigned", LoadDatabase.DELIVERY_HOST, courier1);
+              3L, 3L, 44.32132, 51.32132, "assigned", deliveryHost, courier1);
       Delivery delivery4 =
           new Delivery(
               4L,
@@ -108,10 +114,10 @@ class LoadDatabase {
               43.32132,
               56.32132,
               LoadDatabase.DELIVERED_STATE,
-              LoadDatabase.DELIVERY_HOST,
+              deliveryHost,
               courier2);
       Delivery delivery5 =
-          new Delivery(5L, 4L, 42.32132, 54.32132, "pending", LoadDatabase.DELIVERY_HOST, null);
+          new Delivery(5L, 4L, 42.32132, 54.32132, "pending", deliveryHost, null);
       Arrays.asList(delivery1, delivery2, delivery3, delivery4, delivery5)
           .forEach(deliveries::save);
 
