@@ -5,6 +5,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,6 +15,7 @@ import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.entity.Review;
 import tqs.exdelivery.pojo.ReviewPOJO;
+import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.service.ReviewService;
 
 import static org.hamcrest.Matchers.is;
@@ -24,12 +26,15 @@ import static org.mockito.Mockito.when;
 @AutoConfigureMockMvc
 class ReviewControllerTest {
 
-  ReviewPOJO reviewPOJO;
+  ReviewRequestPOJO reviewRequestPOJO;
   Review review;
   Delivery delivery;
   Courier courier;
   @Autowired private MockMvc mvc;
   @MockBean private ReviewService reviewService;
+
+  @Value("${app.MY_HOST:localhost}")
+  private String DELIVERY_HOST;
 
   @BeforeEach
   void setUp() {
@@ -39,7 +44,9 @@ class ReviewControllerTest {
     delivery = new Delivery();
     delivery.setId(1L);
     delivery.setCourier(courier);
-    reviewPOJO = new ReviewPOJO(3, "test");
+    String deliveryHost = "http://" + DELIVERY_HOST + ":8080/api/v1/purchases";
+    reviewRequestPOJO = new ReviewRequestPOJO(
+            deliveryHost, 4L, 3, "test");
     review = new Review(1L, 3, "test", courier, delivery);
   }
 
@@ -80,11 +87,11 @@ class ReviewControllerTest {
   @WithMockUser(value = "test")
   void whenCreateInvalidReview_thenReturnError() {
 
-    when(reviewService.createReview(any(), any())).thenReturn(null);
+    when(reviewService.createReview(any())).thenReturn(null);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/1000/reviews")
+        .body(reviewRequestPOJO)
+        .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
         .statusCode(400)
@@ -94,11 +101,11 @@ class ReviewControllerTest {
   @Test
   @WithMockUser(value = "test")
   void whenCreateValidReview_thenReturnReview() {
-    when(reviewService.createReview(any(), any())).thenReturn(review);
+    when(reviewService.createReview(any())).thenReturn(review);
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/1/reviews")
+        .body(reviewRequestPOJO)
+        .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
         .statusCode(200)

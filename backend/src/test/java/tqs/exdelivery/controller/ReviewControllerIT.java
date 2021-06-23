@@ -4,6 +4,7 @@ import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.exdelivery.pojo.ReviewPOJO;
+import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.repository.CourierRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,13 +28,26 @@ import static org.mockito.Mockito.when;
 class ReviewControllerIT {
 
   ReviewPOJO reviewPOJO;
+  ReviewRequestPOJO reviewRequestPOJO;
+  ReviewRequestPOJO invalidReviewRequestPOJO;
+  ReviewRequestPOJO nonExistentReviewRequestPOJO;
   @Autowired private MockMvc mvc;
   @Autowired private CourierRepository courierRepository;
+
+  @Value("${app.MY_HOST:localhost}")
+  private String DELIVERY_HOST;
 
   @BeforeEach
   void setUp() {
     RestAssuredMockMvc.mockMvc(mvc);
     reviewPOJO = new ReviewPOJO(3, "test");
+    String deliveryHost = "http://" + DELIVERY_HOST + ":8080/api/v1/purchases";
+    reviewRequestPOJO = new ReviewRequestPOJO(
+            deliveryHost, 4L, 3, "test");
+    invalidReviewRequestPOJO = new ReviewRequestPOJO(
+            deliveryHost, 3L, 3, "test");
+    nonExistentReviewRequestPOJO = new ReviewRequestPOJO(
+            deliveryHost, 1000L, 3, "test");
   }
 
   @Test
@@ -41,8 +56,8 @@ class ReviewControllerIT {
   void whenCreateReviewAndNotDelivered_thenReturnError() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/3/reviews")
+        .body(invalidReviewRequestPOJO)
+        .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
         .statusCode(400)
@@ -55,8 +70,8 @@ class ReviewControllerIT {
   void whenCreateReviewAndInvalidDelivery_thenReturnError() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/1000/reviews")
+        .body(nonExistentReviewRequestPOJO)
+        .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
         .statusCode(400)
@@ -72,8 +87,8 @@ class ReviewControllerIT {
 
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/4/reviews")
+        .body(reviewRequestPOJO)
+        .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
             .contentType(ContentType.JSON)
@@ -96,8 +111,8 @@ class ReviewControllerIT {
   void whenCreateReviewAndAlreadyReviewed_thenReturnError() {
     RestAssuredMockMvc.given()
         .header("Content-Type", "application/json")
-        .body(reviewPOJO)
-        .post("api/v1/deliveries/4/reviews")
+        .body(reviewRequestPOJO)
+        .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
         .statusCode(400)
@@ -111,7 +126,6 @@ class ReviewControllerIT {
   void whenGetExistentReview_thenReturnReview() {
     RestAssuredMockMvc.given()
             .header("Content-Type", "application/json")
-            .body(reviewPOJO)
             .get("api/v1/deliveries/4/reviews")
             .then()
             .assertThat()
