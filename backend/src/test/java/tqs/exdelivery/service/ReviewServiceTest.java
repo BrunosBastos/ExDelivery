@@ -10,6 +10,7 @@ import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.entity.Review;
 import tqs.exdelivery.pojo.ReviewPOJO;
+import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 import tqs.exdelivery.repository.ReviewRepository;
 
@@ -22,10 +23,11 @@ import static org.mockito.Mockito.*;
 class ReviewServiceTest {
 
   private static final String DELIVERY_HOST = "http://localhost:8081/api/v1/";
-  ReviewPOJO reviewPOJO;
+
+  ReviewRequestPOJO reviewRequestPOJO;
   Delivery delivery;
   Delivery invalidDelivery;
-  Review existingReview;
+  Review existentReview;
 
   @Mock(lenient = true)
   private DeliveryRepository deliveryRepository;
@@ -43,18 +45,19 @@ class ReviewServiceTest {
 
     var courier = new Courier(1L, 3.5, 0.0, 0.0, null, true);
 
-    reviewPOJO = new ReviewPOJO(5, "test");
+    reviewRequestPOJO = new ReviewRequestPOJO(DELIVERY_HOST, 1L, 5, "test");
+
     delivery = new Delivery(1L, 1L, 40.23123, 50.63244, "delivered", DELIVERY_HOST, courier);
     invalidDelivery = new Delivery(2L, 2L, 40.23123, 50.63244, "pending", DELIVERY_HOST, courier);
 
-    existingReview = new Review(1L, 3, "Demorou um bocado mais do que esperava", courier, delivery);
+    existentReview = new Review(1L, 3, "Demorou um bocado mais do que esperava", courier, delivery);
   }
 
   @Test
   void whenCreateReviewWithInvalidDeliveryId_thenReturnNull() {
     when(deliveryRepository.findById(anyLong())).thenReturn(Optional.empty());
     when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
-    var review = reviewService.createReview(1L, reviewPOJO);
+    var review = reviewService.createReview(reviewRequestPOJO);
     assertThat(review).isNull();
   }
 
@@ -62,26 +65,53 @@ class ReviewServiceTest {
   void whenCreateReviewThatIsNotDelivered_thenReturnNull() {
     when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(invalidDelivery));
     when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
-    var review = reviewService.createReview(1L, reviewPOJO);
+    var review = reviewService.createReview(reviewRequestPOJO);
     assertThat(review).isNull();
   }
 
   @Test
   void whenCreateReviewThatIsAlreadyReviewed_thenReturnNull() {
     when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(invalidDelivery));
-    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.of(existingReview));
-    var review = reviewService.createReview(1L, reviewPOJO);
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.of(existentReview));
+    var review = reviewService.createReview(reviewRequestPOJO);
     assertThat(review).isNull();
   }
 
   @Test
   void whenCreateValidReview_thenReturnReview() {
-    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
+    when(deliveryRepository.findByPurchaseHostAndPurchaseId(anyString(), anyLong())).thenReturn(Optional.of(delivery));
     when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
-    var review = reviewService.createReview(1L, reviewPOJO);
-    assertThat(review.getRating()).isEqualTo(reviewPOJO.getRating());
-    assertThat(review.getComment()).isEqualTo(reviewPOJO.getComment());
+    var review = reviewService.createReview(reviewRequestPOJO);
+    assertThat(review.getRating()).isEqualTo(reviewRequestPOJO.getRating());
+    assertThat(review.getComment()).isEqualTo(reviewRequestPOJO.getComment());
     assertThat(review.getCourier().getId()).isEqualTo(delivery.getCourier().getId());
     assertThat(review.getDelivery().getId()).isEqualTo(delivery.getId());
+  }
+
+  @Test
+  void whenGetExistentReview_thenReturnReview() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.of(existentReview));
+    var review = reviewService.getReview(1L);
+    assertThat(review.getRating()).isEqualTo(existentReview.getRating());
+    assertThat(review.getComment()).isEqualTo(existentReview.getComment());
+    assertThat(review.getCourier().getId()).isEqualTo(delivery.getCourier().getId());
+    assertThat(review.getDelivery().getId()).isEqualTo(delivery.getId());
+  }
+
+  @Test
+  void whenGetNonExistentDelivery_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.of(delivery));
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.getReview(1L);
+    assertThat(review).isNull();
+  }
+
+  @Test
+  void whenGetNonExistentReview_thenReturnNull() {
+    when(deliveryRepository.findById(anyLong())).thenReturn(Optional.empty());
+    when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
+    var review = reviewService.getReview(1L);
+    assertThat(review).isNull();
   }
 }

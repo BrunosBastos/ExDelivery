@@ -8,6 +8,7 @@ import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
@@ -22,4 +23,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
   Page<Delivery> findAllByCourier(Courier courier, Pageable pageable);
 
   boolean existsByPurchaseHostAndPurchaseId(String purchaseHost, Long purchaseId);
+
+  Optional<Delivery> findByPurchaseHostAndPurchaseId(String purchaseHost, Long purchaseId);
 }

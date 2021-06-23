@@ -51,7 +51,7 @@ const Account = () => {
         return res.json();
     })
     .then ( (res) => {
-      if(!res.errors){
+      if(!res.error){
         console.log(res)
           setProduct(res); 
           setImage(res.imageUrl);    
