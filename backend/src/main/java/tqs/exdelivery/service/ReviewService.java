@@ -3,7 +3,6 @@ package tqs.exdelivery.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.exdelivery.entity.Review;
-import tqs.exdelivery.pojo.ReviewPOJO;
 import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 import tqs.exdelivery.repository.ReviewRepository;
@@ -16,7 +15,6 @@ public class ReviewService {
   @Autowired ReviewRepository reviewRepository;
 
   @Autowired CourierService courierService;
-
 
   public Review getReview(Long deliveryId) {
     var delivery = deliveryRepository.findById(deliveryId);
@@ -33,7 +31,8 @@ public class ReviewService {
 
   public Review createReview(ReviewRequestPOJO reviewRequestPOJO) {
 
-    var delivery = deliveryRepository.findByPurchaseHostAndPurchaseId(
+    var delivery =
+        deliveryRepository.findByPurchaseHostAndPurchaseId(
             reviewRequestPOJO.getHost(), reviewRequestPOJO.getPurchaseId());
     if (delivery.isEmpty()) {
       return null;
@@ -49,8 +48,8 @@ public class ReviewService {
 
     var review =
         new Review(
-                reviewRequestPOJO.getRating(),
-                reviewRequestPOJO.getComment(),
+            reviewRequestPOJO.getRating(),
+            reviewRequestPOJO.getComment(),
             delivery.get().getCourier(),
             delivery.get());
 

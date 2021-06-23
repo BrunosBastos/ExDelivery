@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.entity.Review;
-import tqs.exdelivery.pojo.ReviewPOJO;
 import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 import tqs.exdelivery.repository.ReviewRepository;
@@ -79,7 +78,8 @@ class ReviewServiceTest {
 
   @Test
   void whenCreateValidReview_thenReturnReview() {
-    when(deliveryRepository.findByPurchaseHostAndPurchaseId(anyString(), anyLong())).thenReturn(Optional.of(delivery));
+    when(deliveryRepository.findByPurchaseHostAndPurchaseId(anyString(), anyLong()))
+        .thenReturn(Optional.of(delivery));
     when(reviewRepository.findByDelivery(any())).thenReturn(Optional.empty());
     var review = reviewService.createReview(reviewRequestPOJO);
     assertThat(review.getRating()).isEqualTo(reviewRequestPOJO.getRating());

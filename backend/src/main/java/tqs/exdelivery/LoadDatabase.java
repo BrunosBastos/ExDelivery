@@ -19,10 +19,10 @@ import java.util.Arrays;
 @Configuration
 class LoadDatabase {
 
-  @Value("${app.MY_HOST:localhost}")
-  private String DELIVERY_HOST;
   private static final String DELIVERED_STATE = "delivered";
   private static final String EXAMPLE_PASS = "string";
+  @Value("${app.MY_HOST:localhost}")
+  private String DELIVERY_HOST;
 
   @Bean
   CommandLineRunner initDatabase(
@@ -32,7 +32,6 @@ class LoadDatabase {
       ReviewRepository reviews) {
 
     return args -> {
-
       String deliveryHost = "http://" + DELIVERY_HOST + ":8080/api/v1/purchases";
 
       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -88,43 +87,22 @@ class LoadDatabase {
 
       Delivery delivery1 =
           new Delivery(
-              1L,
-              1L,
-              40.23123,
-              50.63244,
-              LoadDatabase.DELIVERED_STATE,
-              deliveryHost,
-              courier1);
+              1L, 1L, 40.23123, 50.63244, LoadDatabase.DELIVERED_STATE, deliveryHost, courier1);
       Delivery delivery2 =
           new Delivery(
-              2L,
-              2L,
-              44.32132,
-              55.32132,
-              LoadDatabase.DELIVERED_STATE,
-              deliveryHost,
-              courier1);
+              2L, 2L, 44.32132, 55.32132, LoadDatabase.DELIVERED_STATE, deliveryHost, courier1);
       Delivery delivery3 =
-          new Delivery(
-              3L, 3L, 44.32132, 51.32132, "assigned", deliveryHost, courier1);
+          new Delivery(3L, 3L, 44.32132, 51.32132, "assigned", deliveryHost, courier1);
       Delivery delivery4 =
           new Delivery(
-              4L,
-              4L,
-              43.32132,
-              56.32132,
-              LoadDatabase.DELIVERED_STATE,
-              deliveryHost,
-              courier2);
-      Delivery delivery5 =
-          new Delivery(5L, 5L, 42.32132, 54.32132, "pending", deliveryHost, null);
+              4L, 4L, 43.32132, 56.32132, LoadDatabase.DELIVERED_STATE, deliveryHost, courier2);
+      Delivery delivery5 = new Delivery(5L, 5L, 42.32132, 54.32132, "pending", deliveryHost, null);
       Arrays.asList(delivery1, delivery2, delivery3, delivery4, delivery5)
           .forEach(deliveries::save);
 
       Review review1 =
           new Review(1L, 3, "Demorou um bocado mais do que esperava", courier1, delivery1);
       Review review2 = new Review(2L, 4, "Muito simpátido", courier1, delivery2);
-      // Review review3 = new Review(3L, 5, "Adorei, rápido e eficaz!", courier2, delivery4);
       Arrays.asList(review1, review2).forEach(reviews::save);
     };
   }
