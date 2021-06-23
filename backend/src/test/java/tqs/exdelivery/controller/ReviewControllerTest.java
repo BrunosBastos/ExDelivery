@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import tqs.exdelivery.entity.Courier;
 import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.entity.Review;
-import tqs.exdelivery.pojo.ReviewPOJO;
 import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.service.ReviewService;
 
@@ -45,8 +44,7 @@ class ReviewControllerTest {
     delivery.setId(1L);
     delivery.setCourier(courier);
     String deliveryHost = "http://" + DELIVERY_HOST + ":8080/api/v1/purchases";
-    reviewRequestPOJO = new ReviewRequestPOJO(
-            deliveryHost, 4L, 3, "test");
+    reviewRequestPOJO = new ReviewRequestPOJO(deliveryHost, 4L, 3, "test");
     review = new Review(1L, 3, "test", courier, delivery);
   }
 
@@ -55,19 +53,19 @@ class ReviewControllerTest {
   void whenGetExistentReview_thenReturnReview() {
     when(reviewService.getReview(any())).thenReturn(review);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1/reviews")
-            .then()
-            .assertThat()
-            .contentType(ContentType.JSON)
-            .statusCode(200)
-            .body("rating", is(3))
-            .and()
-            .body("comment", is("test"))
-            .and()
-            .body("delivery.id", is(delivery.getId().intValue()))
-            .and()
-            .body("courier.id", is((int) courier.getId()));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1/reviews")
+        .then()
+        .assertThat()
+        .contentType(ContentType.JSON)
+        .statusCode(200)
+        .body("rating", is(3))
+        .and()
+        .body("comment", is("test"))
+        .and()
+        .body("delivery.id", is(delivery.getId().intValue()))
+        .and()
+        .body("courier.id", is((int) courier.getId()));
   }
 
   @Test
@@ -75,12 +73,12 @@ class ReviewControllerTest {
   void whenGetNonExistentReview_thenReturnNotFound() {
     when(reviewService.getReview(any())).thenReturn(null);
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1/reviews")
-            .then()
-            .assertThat()
-            .statusCode(404)
-            .statusLine("404 Review not found");
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1/reviews")
+        .then()
+        .assertThat()
+        .statusCode(404)
+        .statusLine("404 Review not found");
   }
 
   @Test

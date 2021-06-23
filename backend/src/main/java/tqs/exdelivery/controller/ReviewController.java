@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tqs.exdelivery.entity.Review;
-import tqs.exdelivery.pojo.ReviewPOJO;
 import tqs.exdelivery.pojo.ReviewRequestPOJO;
 import tqs.exdelivery.service.ReviewService;
 
@@ -18,10 +17,8 @@ public class ReviewController {
 
   @Autowired ReviewService reviewService;
 
-
   @GetMapping("/deliveries/{id}/reviews")
-  public ResponseEntity<Review> getReview(
-          @PathVariable Long id) {
+  public ResponseEntity<Review> getReview(@PathVariable Long id) {
 
     var review = reviewService.getReview(id);
     if (review == null) {
@@ -33,7 +30,7 @@ public class ReviewController {
 
   @PostMapping("/deliveries/reviews")
   public ResponseEntity<Review> reviewDelivery(
-          @Valid @RequestBody ReviewRequestPOJO reviewRequestPOJO) {
+      @Valid @RequestBody ReviewRequestPOJO reviewRequestPOJO) {
 
     var review = reviewService.createReview(reviewRequestPOJO);
     if (review == null) {

@@ -15,7 +15,6 @@ import tqs.exdelivery.entity.Delivery;
 import tqs.exdelivery.pojo.DeliveryPOJO;
 import tqs.exdelivery.repository.DeliveryRepository;
 
-import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -120,13 +119,18 @@ public class DeliveryService {
     }
   }
 
-  public void notifyHost(Delivery delivery) throws ConnectException {
+  public void notifyHost(Delivery delivery) {
     var headers = new HttpHeaders();
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
     HttpEntity<String> entity = new HttpEntity<>(headers);
 
-    restTemplate.exchange(delivery.getPurchaseHost()+"/"+delivery.getPurchaseId(),
-            HttpMethod.PUT, entity, String.class).getBody();
+    restTemplate
+        .exchange(
+            delivery.getPurchaseHost() + "/" + delivery.getPurchaseId(),
+            HttpMethod.PUT,
+            entity,
+            String.class)
+        .getBody();
   }
 
   public List<Delivery> getCourierAssignedDeliveries(Courier courier) {

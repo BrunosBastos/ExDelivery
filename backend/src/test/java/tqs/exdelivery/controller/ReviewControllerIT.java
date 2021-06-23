@@ -17,8 +17,6 @@ import tqs.exdelivery.repository.CourierRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -42,12 +40,9 @@ class ReviewControllerIT {
     RestAssuredMockMvc.mockMvc(mvc);
     reviewPOJO = new ReviewPOJO(3, "test");
     String deliveryHost = "http://" + DELIVERY_HOST + ":8080/api/v1/purchases";
-    reviewRequestPOJO = new ReviewRequestPOJO(
-            deliveryHost, 4L, 3, "test");
-    invalidReviewRequestPOJO = new ReviewRequestPOJO(
-            deliveryHost, 3L, 3, "test");
-    nonExistentReviewRequestPOJO = new ReviewRequestPOJO(
-            deliveryHost, 1000L, 3, "test");
+    reviewRequestPOJO = new ReviewRequestPOJO(deliveryHost, 4L, 3, "test");
+    invalidReviewRequestPOJO = new ReviewRequestPOJO(deliveryHost, 3L, 3, "test");
+    nonExistentReviewRequestPOJO = new ReviewRequestPOJO(deliveryHost, 1000L, 3, "test");
   }
 
   @Test
@@ -91,7 +86,7 @@ class ReviewControllerIT {
         .post("api/v1/deliveries/reviews")
         .then()
         .assertThat()
-            .contentType(ContentType.JSON)
+        .contentType(ContentType.JSON)
         .statusCode(200)
         .body("rating", is(reviewPOJO.getRating()))
         .and()
@@ -119,23 +114,22 @@ class ReviewControllerIT {
         .statusLine("400 Could not create review");
   }
 
-
   @Test
   @WithMockUser(value = "test")
   @Order(5)
   void whenGetExistentReview_thenReturnReview() {
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/4/reviews")
-            .then()
-            .assertThat()
-            .contentType(ContentType.JSON)
-            .statusCode(200)
-            .body("rating", is(reviewPOJO.getRating()))
-            .and()
-            .body("comment", is(reviewPOJO.getComment()))
-            .and()
-            .body("delivery.id", is(4));
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/4/reviews")
+        .then()
+        .assertThat()
+        .contentType(ContentType.JSON)
+        .statusCode(200)
+        .body("rating", is(reviewPOJO.getRating()))
+        .and()
+        .body("comment", is(reviewPOJO.getComment()))
+        .and()
+        .body("delivery.id", is(4));
   }
 
   @Test
@@ -143,11 +137,11 @@ class ReviewControllerIT {
   @Order(6)
   void whenGetNonExistentReview_thenReturnNotFound() {
     RestAssuredMockMvc.given()
-            .header("Content-Type", "application/json")
-            .get("api/v1/deliveries/1000/reviews")
-            .then()
-            .assertThat()
-            .statusCode(404)
-            .statusLine("404 Review not found");
+        .header("Content-Type", "application/json")
+        .get("api/v1/deliveries/1000/reviews")
+        .then()
+        .assertThat()
+        .statusCode(404)
+        .statusLine("404 Review not found");
   }
 }
